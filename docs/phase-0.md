@@ -17,6 +17,9 @@ the same arrows left, with the error in millimetres written down below.
 
 ## 0. What this phase inherits
 
+- **The owner is an archer** (owner, 2026-11-11), so the gate's photos come from a real boss, face and
+  arrows, but not today. The apparatus is therefore built and checked first, on a rendered end, so
+  the reading is one run on the day the photos exist.
 - **Others already do this.** Arrow Tempo (on-device, the archer confirms every end, $59.99 a year
   for Pro) and ArrowMind (real-time camera scoring, offline) ship camera scoring of arrows in the
   target. Neither is open source. What this app adds is the MaksForge shape: free, offline, no
@@ -88,12 +91,18 @@ the hole it leaves at most 1.5 mm?*
 
 ### The apparatus
 
-A Python script in the scratchpad, never committed, on OpenCV (Apache 2.0, the same library the app
-would use):
+[`tools/gate/`](../tools/gate/), on OpenCV (Apache 2.0, the same library the app would use). It is
+committed rather than kept in a scratchpad because the photos arrive in a later session; it never
+ships in the app, and the photos stay out of git (`tools/gate/runs/` is ignored). `synth.py` renders a
+fake end with known entry points, `click.py` collects the clicks on real photos, `gate.py` takes the
+reading, and `test_gate.py` holds all three to account:
 
-1. Segment the colour zones in Lab colour space and fit an ellipse to each zone boundary, per view.
-   Report the ring residual in mm. The black/white and blue/black boundaries have no printed line and
-   may not fit: record which ones do.
+1. Segment the colour zones in Lab colour space and fit an ellipse to the outer edge of the gold,
+   red and blue regions, per view, each searched only inside the one around it. The face plane comes
+   from the red and blue edges: in a straight-on photo the fletchings cover most of the gold, and
+   fletchings in gold or red would otherwise pass for rings. Report each ring's residual in mm. The
+   Lab thresholds are tuned on the rendered colours; real light may need them moved, which is itself
+   a finding.
 2. Two points per shaft per view: clicked by hand first, then tried with OpenCV's line segment
    detector to see whether they can be found automatically.
 3. Triangulate each shaft from two views against the face plane (intrinsics from EXIF, or from
@@ -116,6 +125,17 @@ would use):
 3. **The rings do not fit reliably** from handheld photos. → The app as pitched does not work. Stop
    and bring the choice to the owner: the archer taps the face's centre and edge to straighten it, a
    printed marker beside the face, or park the idea.
+
+### The dry run, on a rendered end (2026-11-11)
+
+`uv run --script tools/gate/synth.py tools/gate/runs/synth` then `gate.py` on it: a 40 cm face, six
+5.5 mm shafts tilted up to 9°, the *near* click 12 mm up each shaft, 1 px click noise, JPEG at 92.
+Red and blue fit to 0.15–0.24 mm RMS in all four photos; gold only in the two the fletchings do not
+cover (0.5–0.7 mm against 7–10 mm). Entry error against the holes: front photo alone median 1.21 mm,
+worst 2.82 mm; two or three views median 0.85 mm, worst 1.60 mm, and one of the six scored a zone low.
+The worst two-view arrows are those whose shaft planes meet the face at a narrow angle (15° and
+27°), so a fourth photo should be asked for by that angle, not by count. This proves the arithmetic,
+not the method: a rendered face has perfect colours, a flat sheet and straight shafts.
 
 ### The verdict, taken *(date)*
 
@@ -207,7 +227,7 @@ Read for this phase on 2026-11-11.
 
 | # | Reading | Command | Result |
 | --- | --- | --- | --- |
-| R1 | Rings fit automatically in each of the three views, with the residual in mm | the gate script, step 1 | *(not taken)* |
-| R2 | Median and worst entry-point error, single view against two views, against the holes | the gate script, steps 3–4 | *(not taken)* |
-| R3 | How many of the six entry points each view hides | the gate script, step 2 | *(not taken)* |
-| R4 | Shafts found automatically by the line segment detector, out of 18 | the gate script, step 2 | *(not taken)* |
+| R1 | Rings fit automatically in each of the three views, with the residual in mm | `uv run --script tools/gate/gate.py tools/gate/runs/<date>` after `click.py` | *(not taken)* |
+| R2 | Median and worst entry-point error, single view against two views, against the holes | the same run | *(not taken)* |
+| R3 | How many of the six entry points each view hides | the same run's *seen in* column | *(not taken)* |
+| R4 | Shafts found automatically by the line segment detector, out of 18 | not built yet: added once R1–R3 are read | *(not taken)* |
