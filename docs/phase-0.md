@@ -72,7 +72,7 @@ the face and can be moved, added or removed, and any arrow within about 2 mm of 
 | **A** | **The gate**: can a few handheld photos of an end be scored to within 1.5 mm, automatically or nearly so? | `docs:` the verdict here | photos of a real end |
 | **B** ✅ | **The strip**: delete the modules section 2 names, amend their ADRs | `refactor:` | owner's yes on section 2 |
 | **C** ✅ | **The first face** and the scoring rules it needs, as written rules (section 3). Decided (owner, 2026-11-11) | `docs:` | owner's answer on the face |
-| **D** | **Palette and mark** | `feat:` | — |
+| **D** ✅ | **Palette and mark** | `feat:` | — |
 | **E** ✅ | **The placeholder domain becomes an empty *Score an end* screen** | `feat:` | B |
 
 A goes first because verdict 3 vetoes the app as pitched. B waits only on the owner, not on A: none
@@ -199,8 +199,22 @@ Art. 12.2 (2026-01-27 versions):
 
 ## 4. Palette and mark
 
-Design decisions go to a Fable subagent before options reach the owner (global rule). Not branded:
-MaksForge colours only if the owner says so.
+**Owner chose option A on 2026-11-11**, from three a Fable design pass drew up (range green,
+graphite, violet). Not branded.
+
+- **Palette:** seeds primary `2F6B4A` (range green), secondary `5C6E63` (grey-green), tertiary
+  `7A5C8E` (heather, the *moved by hand* marker), neutral `E2E5E1` (near-grey). Green is the one hue
+  with a reason to be here, and the furthest from the face's gold, red and blue; a warm neutral
+  would lean to the gold and a blue-grey to the blue ring. All of `gen_scheme.py`'s contrast checks
+  pass.
+- **Mark:** the Group, three arrow holes in a tight group inside a ring (`art/README.md`). Its
+  known weakness is that at a glance it can pass for a bowling ball; if that shows on a home screen,
+  move the holes further off-centre before changing the idea.
+- **A rule for every phase that draws arrows on the face:** no brand colour reaches 3:1 against the
+  face's red (primary at tone 40 is about 1.7:1), so an arrow marker on the face always carries a
+  white and black keyline, never brand colour alone.
+- The feature graphic is left for Phase N: regenerated with this mark, the template's copy runs into
+  it, and the listing copy is not written yet.
 
 ---
 

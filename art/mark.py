@@ -1,39 +1,18 @@
-"""The placeholder mark: the single definition of this app's identity.
+"""The mark: a tight group of three arrow holes inside a ring, the single definition of this app's identity.
 
-**Replace this file.** It draws a rounded triangle with a hole punched through it — deliberately
-generic, deliberately obviously a placeholder. Both generators import it (`make-launcher-icon.py`
-emits it as `VectorDrawable` path data, `make-feature-graphic.py` rasterises it with PIL), so
-whatever you put here cannot drift into being two different marks.
+Both generators import it, so the launcher icon, the notification icon and the feature graphic
+cannot drift into being different marks. Drawn from circles in code, nothing traced: provenance in
+`art/README.md`.
 
-The way to replace it: draw or generate a concept image, run `python3 art/trace-mark.py <image>`,
-and paste the curves it prints over MARK and HOLE below. Nothing else in the pipeline changes.
-**Commit the concept image beside this file** and record where it came from in `art/README.md`.
-
-**Use art you have the right to ship.** An icon traced from an emoji font, a stock icon or someone
-else's mark is a licence obligation at best and a rejected Play upload at worst. Art you generated
-from your own prompt, or drew, is clean.
-
-The geometry is two subpaths: the shape, and the hole punched out of it. Coordinates are in
-arbitrary units around an origin at the mark's centre; callers fit them to their own canvas with
-`fit()`. y grows downward, as it does in both SVG and PIL.
+Coordinates are in arbitrary units around an origin at the mark's centre; callers fit them to their
+own canvas with `fit()`. y grows downward, as it does in both SVG and PIL.
 """
 
 import re
 from dataclasses import dataclass
 
-# The icon's two colours — take both from the app's generated scheme (`scripts/gen_scheme.py`) rather
-# than picking them for the icon, so the identity and the app agree. They are the *only* copy:
-# make-launcher-icon.py writes ic_launcher_background.xml from GROUND, so recolouring the identity is
-# an edit here and a re-run, never a second value somewhere else to keep in step. (It used to be
-# two — this file and a hand-written background drawable — and an app built from the template found
-# them disagreeing the first time its palette moved.)
-#
-# ⚠ **A dark tone of a warm hue is brown.** The first app built from this template tried its
-# `primary` darkened for contrast as the ground and it read as mud; then a gradient, whose middle is
-# the same mud at 44dp. What survived was a flat mid-tone role (`surfaceVariant`) under a light-ish
-# ink (`primary`). Judge the ground at launcher size on a real home screen, light and dark.
-GROUND = (0x2B, 0x4C, 0x7E)  # the icon's flat field — `primary`, darkened for contrast at icon sizes
-MARK_INK = (0xFF, 0xFB, 0xFF)  # the mark on that field — the light scheme's `surface`
+GROUND = (0x10, 0x51, 0x32)
+MARK_INK = (0xF7, 0xFA, 0xF6)
 
 
 @dataclass(frozen=True)
@@ -51,26 +30,27 @@ class Subpath:
     hole: bool = False
 
 
-# A rounded triangle pointing right. One outer contour.
-MARK = (
-    "M-27.48,-73.6"
-        "C-39.92,-80.78 -50,-74.96 -50,-60.6C-50,-20.2 -50,20.2 -50,60.6"
-        "C-50,74.96 -39.92,80.78 -27.48,73.6C7.51,53.4 42.49,33.2 77.48,13"
-        "C89.92,5.82 89.92,-5.82 77.48,-13C42.49,-33.2 7.51,-53.4 -27.48,-73.6"
+def circle(cx, cy, r):
+    k = 0.5523 * r
+    return (
+        f"M{cx + r:g},{cy:g}"
+        f"C{cx + r:g},{cy + k:g} {cx + k:g},{cy + r:g} {cx:g},{cy + r:g}"
+        f"C{cx - k:g},{cy + r:g} {cx - r:g},{cy + k:g} {cx - r:g},{cy:g}"
+        f"C{cx - r:g},{cy - k:g} {cx - k:g},{cy - r:g} {cx:g},{cy - r:g}"
+        f"C{cx + k:g},{cy - r:g} {cx + r:g},{cy - k:g} {cx + r:g},{cy:g}"
         "Z"
-)
+    )
 
-# The hole punched through it.
-HOLE = (
-    "M20,0"
-        "C20,14.36 8.36,26 -6,26C-20.36,26 -32,14.36 -32,0"
-        "C-32,-14.36 -20.36,-26 -6,-26C8.36,-26 20,-14.36 20,0"
-        "Z"
-)
 
+# Painted in this order: PIL rasterisers draw each part over the last, and the VectorDrawable's
+# non-zero fill gives the same result from the windings.
 PARTS = (
-    Subpath(MARK),
-    Subpath(HOLE, hole=True),
+    Subpath(circle(0, 0, 25)),
+    Subpath(circle(0, 0, 19.5), hole=True),
+    Subpath(circle(0, 0, 16)),
+    Subpath(circle(-4.5, -5.5, 3.7), hole=True),
+    Subpath(circle(5, -3.5, 3.7), hole=True),
+    Subpath(circle(0, 4.5, 3.7), hole=True),
 )
 
 _NUM = re.compile(r"-?\d*\.?\d+(?:e-?\d+)?")

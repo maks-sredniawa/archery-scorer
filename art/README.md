@@ -6,19 +6,22 @@ the `VectorDrawable`s.
 
 | Asset | Source | State |
 | --- | --- | --- |
-| `mark.py`'s MARK and HOLE curves | your concept image → `trace-mark.py` | **placeholder — replace** |
-| `concept.png` | the image the mark was traced from — **commit it**, with its provenance below | — |
+| `mark.py`'s PARTS | circles drawn in code; no concept image | the Group mark |
 | `drawable/ic_launcher_{background,foreground,monochrome}.xml`, `drawable/ic_notification.xml`, `mipmap-*`, `play-icon-512.png` | `mark.py` → `make-launcher-icon.py` | generated |
 | `play-feature-graphic.png`, `play-feature-graphic-<tag>.png` (1024×500, one per translated listing; `COPY`) | `mark.py` + `theme/Color.kt` (+ `feature-background.png` if present) → `make-feature-graphic.py` | generated |
 | `play-screenshots/<n>_<scene>-<tag>.png` | `scripts/screenshots.py --build release --numbered` → `pad-screenshot.py` | — |
 
 ## The mark
 
-`mark.py` is the single definition, as **two cubic subpaths** — the silhouette and a hole punched
-out of it. Both generators import it, so the launcher icon, the notification icon and the feature
+`mark.py` is the single definition, as **cubic subpaths in `PARTS`**, each a filled shape or a hole
+punched through what is under it. Both generators import it, so the launcher icon, the notification icon and the feature
 graphic cannot drift into being different marks.
 
-What ships today is a rounded triangle: deliberately generic, deliberately obviously a placeholder.
+What ships is **the Group mark**: a disc with a ring cut round it and three arrow holes in a tight
+group, the thing the app finds. Every part is a circle, so it is written in code rather than traced,
+and the ring gap and the holes are real holes. Ground `105132` is the dark scheme's
+`primaryContainer` and the ink `F7FAF6` the light scheme's `surface`. Chosen by the owner on
+2026-11-11 from three options, on a Fable design pass.
 
 - **Recolouring is two values in `mark.py` and a re-run**: `GROUND` (the icon's field) and
   `MARK_INK` (the mark on it). `make-launcher-icon.py` writes every drawable from them, the
@@ -57,7 +60,8 @@ with Noto Sans on that basis and ships no glyph outlines.
 # 1. Draw or generate a concept image, and put it beside this file.
 python3 art/trace-mark.py concept.png   # prints cubic path data
 #    Set CROP and the concept's two tones at the top of trace-mark.py first — they describe the
-#    *image being traced*, not the app. Paste MARK and HOLE into art/mark.py, with your colours.
+#    *image being traced*, not the app. Paste the outer path and the hole into art/mark.py's PARTS
+#    as Subpath(...) and Subpath(..., hole=True), with your colours.
 
 # 2. Regenerate everything that derives from it.
 python3 art/make-launcher-icon.py       # icons, mipmaps, the 512² Play asset
@@ -91,5 +95,5 @@ it came from in the provenance table below, like the concept image.
 
 | File | Where it came from | Licence / terms |
 | --- | --- | --- |
-| `concept.png` | *(your drawing, or an image model and whose prompt)* | |
+| `mark.py` | drawn in code from circles, for this app | the repo's LICENSE |
 | `feature-background.png` | *(if used)* | |
