@@ -41,10 +41,9 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       only phone in the loop sits at the top of the range, every `SDK_INT` branch below it ships
       unvalidated — the first app built from this template raised 26 to 33 for exactly that reason. Move CI's floor legs with it,
       and write the reason beside `minSdk` in `app/build.gradle.kts`, where the next person to touch it reads it.
-- [ ] **Replace the placeholder mark.** `art/mark.py`, then `python3 art/make-launcher-icon.py` and
-      `make-feature-graphic.py`. Commit the concept image and record its provenance in
-      `art/README.md` — where the art came from is the thing most likely to block a first upload, and
-      it is discovered late.
+- [ ] **Regenerate the feature graphic** with the Group mark: `python3 art/make-feature-graphic.py`,
+      once the listing copy is written. Deferred to Phase N (`phase-0.md` section 4): the template's
+      copy runs into the new mark.
 - [x] **Replace the placeholder domain.** Items deleted 2026-11-11; the home screen is an empty
       **Score an end** screen.
 - [ ] **Rewrite `scripts/edge-to-edge.py`'s SCENES** against your screens. Until then the nightly
@@ -53,8 +52,7 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       EXPECTED_ORIENTATION describe the template. Run all four `aab-*.py` scripts against a local
       `bundleRelease` **before the first tag** — the first app built from it found its stale table in the publish
       workflow, after the tag, with the version already spent.
-- [ ] **Choose the palette.** Four seeds in `scripts/gen_scheme.py`, regenerate `theme/Color.kt`,
-      read the contrast report it prints on stderr.
+- [x] **Choose the palette.** Range green, chosen 2026-11-11 (`phase-0.md` section 4).
 - [ ] **Make the support address work both ways.** `bootstrap.py` compiled in
       `<repo>.support@maksforge.com` (or `--support`) and wrote it into the site, the privacy policy
       and the Play docs. Mail to it arrives through the domain's catch-all; replying from it needs the
