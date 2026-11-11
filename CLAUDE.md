@@ -129,6 +129,7 @@ app/src/debug/    the developer-only build: the sample-data seeder, Settings' de
                   capture driver
 app/src/release/  only the no-op half of each seam, so main/ can call it unconditionally
 scripts/          the Python toolchain. project.py is the one place the app's identity lives
+tools/gate/       phase 0's photo-scoring gate, throwaway Python outside the app (docs/phase-0.md)
 art/             mark.py is the identity; both generators derive from it
 ```
 

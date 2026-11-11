@@ -37,4 +37,3 @@ fastlane/metadata/
 
 # Phase 0 gate photos and outputs stay local
 tools/gate/runs/
-tools/gate/__pycache__/
