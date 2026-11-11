@@ -61,3 +61,17 @@ the user's patience on nudges that do not need any of it. If everything is urgen
   user**. Creating a channel quiet is a decision with no second attempt.
 - Testing any of this on a vendor ROM requires reading the autostart state first. A run against an
   unknown one proves nothing either way — `scripts/device-gate.py` reads it.
+
+## Amendment, 2026-11-11: nothing is scheduled
+
+Archery Scorer has no reminders, so WorkManager, the exact alarm, both receivers, the notification
+channel and the notification-permission ask were deleted before the first upload
+([`optional-modules.md`](../optional-modules.md)). The artifact no longer carries
+`POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, `SCHEDULE_EXACT_ALARM`, `WAKE_LOCK` or
+`FOREGROUND_SERVICE`; `ACCESS_NETWORK_STATE` stays, merged by the Play Billing Library alone
+(ADR-0007). `scripts/device-gate.py` keeps only its autostart and battery readings, and
+`scripts/doze-capture.sh` went with the sweep it captured. `ic_notification.xml` stays, kept by
+`res/raw/keep.xml`, because `art/make-launcher-icon.py` regenerates it from the mark.
+
+If a feature ever needs a schedule, the split above is still the reasoning to start from, and a boot
+receiver without WorkManager has to declare `RECEIVE_BOOT_COMPLETED` itself.

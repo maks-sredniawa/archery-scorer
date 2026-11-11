@@ -53,3 +53,12 @@ else — and "missing media renders as a placeholder" already covers the other d
 - The crop is blind: there is no crop-and-zoom UI, so re-picking is the user's only recourse. Keep
   the crop centred and predictable.
 - Nothing upscales. A 300 px source is stored at 300 px, not blown up with invented pixels.
+
+## Note, 2026-11-11: the pipeline stays
+
+The Phase 0 strip removed Room, backup export and reminders, and kept this pipeline whole, because
+Archery Scorer takes photos: `TakePicture` hands the shot to the system camera through the
+`FileProvider`, and `MediaFiles` is where it lands. `MediaFiles` never depended on the database, so
+nothing here changed except the backup-scope references, which went with `data/backup/`, and the
+`exports/` and `preserved/` entries in `file_paths.xml`, which went with the export and the schema
+gate. Whether a photo outlives its scored end is Phase 1's decision.

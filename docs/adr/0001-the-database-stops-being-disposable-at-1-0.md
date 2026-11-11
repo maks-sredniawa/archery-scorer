@@ -62,3 +62,16 @@ A completely green migration suite says nothing about whether a real upgrade is 
   one file per variant, so a release binary carries neither it nor its string; the flag is still
   needed because `-PreleaseShapedDebug` compiles the debug half without the destructive fallback.
 - `preserved/` is never pruned. It is small and it is the last copy.
+
+## Amendment, 2026-11-11: no database, so no gate
+
+Archery Scorer scores one end at a time and keeps no rounds or history (owner, 2026-11-11), so it
+deleted Room before the first upload, as [`optional-modules.md`](../optional-modules.md) recommends:
+a table removed now costs nothing, one removed after release is a destructive migration against real
+installs. The launch gate, `SchemaGate.kt`, the mismatch screen, the exported schemas and the
+migration tests went with it, and `docs/DOD.md`'s standing schema gate is parked.
+`scripts/schema-gate.py` reads the missing `data/AppDatabase.kt` and passes with nothing to gate.
+
+The decision above is unchanged and comes back whole the day a feature needs a table. Kept rounds
+are the likely one: a round is ends joined to arrows, which is what a table is for. That feature
+brings Room, this gate, and the five-point checklist in the same change, at schema version 1.

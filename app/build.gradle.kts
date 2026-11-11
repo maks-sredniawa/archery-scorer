@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.licensee)
 }
 
@@ -198,13 +197,6 @@ tasks.withType<Test>().configureEach {
         .withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
-// Room exports the compiled schema as JSON, and those files are what make a migration reviewable
-// — and what `MigrationTestHelper` builds an old database from. Generated here and committed.
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.generateKotlin", "true")
-}
-
 // Attribution, generated rather than remembered.
 //
 // The obligation is over the **resolved runtime classpath**, not the entries in
@@ -254,15 +246,6 @@ abstract class BundleLicences : DefaultTask() {
 
 androidComponents {
     onVariants { variant ->
-        // The exported schemas, shipped inside the *instrumented test* APK as assets.
-        // `MigrationTestHelper` reads a version's JSON at runtime to build a database at that
-        // version, so `1.json` has to be readable on the device — existing in the repo is not
-        // enough. This one line is what turns a committed schema file into a testable one.
-        variant.androidTest
-            ?.sources
-            ?.assets
-            ?.addStaticSourceDirectory("$projectDir/schemas")
-
         // Per variant on purpose: the debug build ships `ui-tooling` and the release build does
         // not, so one shared list would be wrong for whichever variant it was not generated from.
         // The screen names what *this* binary contains, which is what the obligation is about.
@@ -306,11 +289,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-    androidTestImplementation(libs.androidx.room.testing)
-    androidTestImplementation(libs.androidx.work.testing)
     implementation(libs.androidx.datastore.preferences)
 
     // The tip (ADR-0007). Its transitive telemetry merges INTERNET, which the manifest removes again.
@@ -318,9 +296,7 @@ dependencies {
     // Consumes a cleared tip whenever the app comes to the foreground — see MainApplication.
     implementation(libs.androidx.lifecycle.process)
 
-    // The export manifest inside a backup zip. JSON rather than a hand-rolled format, because the
-    // manifest is what a restore's promise is sourced from. Enums serialise by *name*, which is the
-    // same rule the database's converters follow.
+    // The Licences screen reads Licensee's JSON report.
     implementation(libs.kotlinx.serialization.json)
 
     // Reading the camera's orientation tag so it can be baked into the pixels. The androidx one,
@@ -341,11 +317,6 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.kotlinx.coroutines.test)
-
-    // Scheduling. Initialised on demand rather than by androidx.startup — see MainApplication,
-    // where the schema wipe guard also lives and the ordering between the two has to be a decision
-    // rather than a merged-manifest accident.
-    implementation(libs.androidx.work.runtime)
 
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)

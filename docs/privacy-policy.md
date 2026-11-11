@@ -33,33 +33,24 @@ The Google Play Billing library, which handles tips, carries usage logging of it
 
 ## What the app can access, and why
 
-- **Photos you choose.** The app uses Android's Photo Picker, which hands it the single file you
-  picked and nothing else — it never has access to your gallery. A picture you attach is copied into
-  the app's own storage, **re-encoded so that the original's metadata does not travel with it**;
-  the location a camera stamps on a photo is removed in the process.
-- **The camera**, only when you tap to take a picture, through the system camera app. The app
-  declares no camera permission.
-- **Notifications**, only if you turn reminders on.
+- **Photos of your target.** When you photograph an end, the app hands the shot to your phone's own
+  camera app and receives the single picture it takes; it declares no camera permission and never
+  has access to your gallery. The picture is **scored on your phone and never uploaded**. It is
+  copied into the app's own storage, **re-encoded so that the original's metadata does not travel
+  with it**; the location a camera stamps on a photo is removed in the process.
 - **Google Play billing.** Lets the app ask the Google Play app for the price of a tip and open its
   payment sheet. It gives the app nothing about you.
 
-## The three things that happen outside the app
+## The two things that happen outside the app
 
 These are done by the operating system or by Google, not by <app name>, but they are the honest
 answer to "where could my data be":
 
 1. **Android's automatic backup.** If it is enabled on your phone, Android backs up the app's data
    to your own Google Drive, in a space that does not count against your storage quota and that
-   Google states apps cannot read. You can turn this off in your phone's settings; the app has a
-   link to that screen.
-2. **Backups you export yourself.** A backup is a file, and once you have shared or saved it, where
-   it goes is up to you and to whatever app you sent it to. Some phones' share screens only hand a
-   file over if every app that can receive one may read it before you choose, so the app allows
-   that when you share a backup. Once you pick an app, the others lose that access, and if you close
-   the share screen without picking, all of them lose it as soon as you are back in the app (or, if
-   the phone closed the app meanwhile, when you next share a backup). The one
-   you picked keeps it until you next share a backup or restart the phone.
-3. **Google Play.** Installing and updating an app is a transaction between your phone and Google,
+   Google states apps cannot read. It covers everything the app stores, your settings included, so
+   they come back when you set up a new phone. You can turn this off in your phone's settings.
+2. **Google Play.** Installing and updating an app is a transaction between your phone and Google,
    with its own privacy policy. About installs, the developer of this app receives aggregate,
    anonymous statistics — install counts, crash rates, country-level breakdowns — and no information
    about individuals.

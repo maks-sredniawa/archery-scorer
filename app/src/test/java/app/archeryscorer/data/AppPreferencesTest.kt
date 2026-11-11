@@ -46,24 +46,23 @@ class AppPreferencesTest {
     }
 
     @Test
-    fun `restoring resets every setting and keeps state and grants`() =
+    fun `restoring resets every setting and keeps state`() =
         runBlocking {
             with(preferences) {
                 setThemeMode(ThemeMode.DARK)
                 setMaterialYou(true)
-                setRemindersEnabled(true)
                 setOnboardingDone(true)
-                setBackupFolderUri("content://tree")
                 markTipAsked()
+                countEndScored()
+                countEndScored()
 
                 restoreDefaults()
 
                 assertEquals(ThemeMode.SYSTEM, themeMode.first())
                 assertFalse(materialYou.first())
-                assertFalse(remindersEnabled.first())
                 assertTrue(onboardingDone.first())
-                assertEquals("content://tree", backupFolderUri.first())
                 assertTrue(tipAsked.first())
+                assertEquals(2, endsScored.first())
             }
         }
 }
