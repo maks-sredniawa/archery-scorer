@@ -27,9 +27,10 @@ from rich.panel import Panel
 from rich.table import Table
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from face import Face, fit_rings, near_line, score, single_view_entry, triangulated_entry  # noqa: E402
+from face import Face, RingFit, fit_rings, near_line, score, single_view_entry, triangulated_entry  # noqa: E402
 
 PASS_MEDIAN_MM = 1.5
+RING_FIT_MAX_RMS_MM = 1.0
 console = Console()
 
 
@@ -45,14 +46,27 @@ def focal_px(path: Path, entry: dict) -> float:
     return float(f35) * float(np.hypot(width, height)) / float(np.hypot(36, 24))
 
 
-def load_plane(run: Path, entry: dict, face: Face, label: str):
+def ring_fit(run: Path, entry: dict, face: Face, label: str) -> RingFit:
     path = run / entry["image"]
     image = cv2.imread(str(path))
     if image is None:
         raise SystemExit(f"cannot read {path}")
     with console.status(f"fitting rings in {label} ..."):
-        fit = fit_rings(image, focal_px(path, entry), face, entry["ref"])
-    return fit
+        return fit_rings(image, focal_px(path, entry), face, entry["ref"])
+
+
+def fits(fit: RingFit) -> bool:
+    return fit.plane is not None and max(fit.residual_mm["red"], fit.residual_mm["blue"]) <= RING_FIT_MAX_RMS_MM
+
+
+def median_or_none(errors: list[float]) -> float | None:
+    return statistics.median(errors) if errors else None
+
+
+def summary(errors: list[float]) -> str:
+    if not errors:
+        return "none"
+    return f"median {statistics.median(errors):.2f} mm, worst {max(errors):.2f} mm ({len(errors)})"
 
 
 def main() -> None:
@@ -64,29 +78,30 @@ def main() -> None:
     shaft = float(clicks["shaft_mm"])
     console.print(Panel(f"Phase 0 gate · {args.run} · {face.diameter_mm / 10:.0f} cm face · shaft {shaft} mm", expand=False))
 
-    rings = Table(title="R1 · ring fit per photo (RMS distance from the nominal edge, mm)")
+    rings = Table(title=f"R1 · ring fit per photo (RMS distance from the nominal edge, mm; fits ≤ {RING_FIT_MAX_RMS_MM})")
     for col in ("photo", "gold", "red", "blue", "fits"):
         rings.add_column(col)
-    planes, all_fit = [], True
+    planes, fitted = [], []
     labelled = [(v["image"], v) for v in clicks["views"]] + [(clicks["holes"]["image"] + " (holes)", clicks["holes"])]
     for label, entry in labelled:
-        fit = load_plane(args.run, entry, face, label)
-        ok = fit.plane is not None and max(fit.residual_mm["red"], fit.residual_mm["blue"]) < 1.0
-        all_fit &= ok
+        fit = ring_fit(args.run, entry, face, label)
+        ok = fits(fit)
+        fitted.append(ok)
         cells = [f"{fit.residual_mm[n]:.2f}" for n in ("gold", "red", "blue")] if fit.plane else ["-"] * 3
         rings.add_row(label, *cells, "yes" if ok else f"no {fit.reason}".strip())
         planes.append(fit.plane)
     console.print(rings)
     view_planes, holes_plane = planes[:-1], planes[-1]
+    views_fit, holes_fit = all(fitted[:-1]), fitted[-1]
     if holes_plane is None or not any(view_planes):
         console.print("[red]Rings did not fit where they had to; no entry point can be computed.[/red]")
         raise SystemExit(1)
 
     holes = [holes_plane.to_face(p) for p in clicks["holes"]["arrows"]]
-    table = Table(title="R2/R3 · entry point against the hole, mm")
+    table = Table(title="R2 · entry point against the hole, mm")
     for col in ("arrow", "hole", "seen in", "front only", "two views", "angle", "score: hole / two views", "check"):
         table.add_column(col)
-    single_err, multi_err, rows = [], [], []
+    single_err, multi_err, rows = {False: [], True: []}, [], []
     for i, hole in enumerate(holes):
         seen = [
             (plane, view["arrows"][i]["near"], view["arrows"][i]["far"])
@@ -95,11 +110,12 @@ def main() -> None:
         ]
         front = clicks["views"][0]["arrows"][i]
         single = single_view_entry(view_planes[0], front["near"]) if view_planes[0] and front else None
+        front_hidden = bool(front.get("near_hidden")) if front else None
         multi, angle = triangulated_entry(seen) if len(seen) >= 2 else (None, 0.0)
         s_err = float(np.linalg.norm(single - hole)) if single is not None else None
         m_err = float(np.linalg.norm(multi - hole)) if multi is not None else None
         if s_err is not None:
-            single_err.append(s_err)
+            single_err[front_hidden].append(s_err)
         if m_err is not None:
             multi_err.append(m_err)
         hole_r = float(np.linalg.norm(hole))
@@ -109,33 +125,55 @@ def main() -> None:
             str(i + 1),
             f"({hole[0]:.1f}, {hole[1]:.1f})",
             str(len(seen)),
-            f"{s_err:.2f}" if s_err is not None else "-",
+            f"{s_err:.2f}{' (hidden)' if front_hidden else ''}" if s_err is not None else "-",
             f"{m_err:.2f}" if m_err is not None else "-",
             f"{angle:.0f}°",
             f"{score(face, hole_r, shaft)} / {est_score if est_score is not None else '-'}",
             flag,
         )
         rows.append({"arrow": i + 1, "hole_mm": hole.tolist(), "views": len(seen), "front_only_mm": s_err,
+                     "front_entry_hidden": front_hidden,
                      "two_view_mm": m_err, "angle_deg": angle, "hole_score": score(face, hole_r, shaft),
                      "two_view_score": est_score})
     console.print(table)
 
+    hiding = Table(title="R3 · entry points each view hides")
+    for col in ("view", "arrows seen", "entry hidden"):
+        hiding.add_column(col)
+    views = []
+    for view in clicks["views"]:
+        seen = [a for a in view["arrows"] if a is not None]
+        hidden = sum(bool(a.get("near_hidden")) for a in seen)
+        hiding.add_row(view["image"], str(len(seen)), str(hidden))
+        views.append({"image": view["image"], "seen": len(seen), "entry_hidden": hidden})
+    console.print(hiding)
+
+    front_all = single_err[False] + single_err[True]
     median_multi = statistics.median(multi_err) if multi_err else float("inf")
-    median_single = statistics.median(single_err) if single_err else float("inf")
-    passed = all_fit and median_multi <= PASS_MEDIAN_MM
+    median_single = statistics.median(front_all) if front_all else float("inf")
+    passed = views_fit and median_multi <= PASS_MEDIAN_MM
+    verdict = ("PASS" if passed else "FAIL") if holes_fit else "NO READING: retake the holes photo"
     console.print(
         Panel(
-            f"rings fit in every photo: {'yes' if all_fit else 'no'}\n"
-            f"front photo only: median {median_single:.2f} mm, worst {max(single_err, default=float('nan')):.2f} mm\n"
+            f"rings fit in all {len(view_planes)} views: {'yes' if views_fit else 'no'}\n"
+            f"rings fit in the holes photo (ground truth usable): {'yes' if holes_fit else 'no'}\n"
+            f"front photo only: median {median_single:.2f} mm, worst {max(front_all, default=float('nan')):.2f} mm\n"
+            f"  entry visible: {summary(single_err[False])}\n"
+            f"  entry hidden: {summary(single_err[True])}\n"
             f"two or more views: median {median_multi:.2f} mm, worst {max(multi_err, default=float('nan')):.2f} mm\n"
-            f"pass line: rings fit and two-view median ≤ {PASS_MEDIAN_MM} mm → [bold]{'PASS' if passed else 'FAIL'}[/bold]",
+            f"pass line: rings fit and two-view median ≤ {PASS_MEDIAN_MM} mm → [bold]{verdict}[/bold]",
             title="verdict input",
             expand=False,
         )
     )
-    (args.run / "report.json").write_text(json.dumps({"passed": passed, "rings_fit": all_fit,
+    (args.run / "report.json").write_text(json.dumps({"passed": passed if holes_fit else None, "rings_fit": views_fit,
+                                                       "holes_fit": holes_fit,
+                                                       "ring_fit_max_rms_mm": RING_FIT_MAX_RMS_MM,
                                                        "median_front_mm": median_single,
-                                                       "median_two_view_mm": median_multi, "arrows": rows}, indent=2))
+                                                       "median_front_visible_mm": median_or_none(single_err[False]),
+                                                       "median_front_hidden_mm": median_or_none(single_err[True]),
+                                                       "median_two_view_mm": median_multi, "views": views,
+                                                       "arrows": rows}, indent=2))
 
 
 if __name__ == "__main__":

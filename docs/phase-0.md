@@ -104,12 +104,21 @@ reading, and `test_gate.py` holds all three to account:
    Lab thresholds are tuned on the rendered colours; real light may need them moved, which is itself
    a finding.
 2. Two points per shaft per view: clicked by hand first, then tried with OpenCV's line segment
-   detector to see whether they can be found automatically.
+   detector to see whether they can be found automatically. When a view hides the entry point (a
+   nock in front of it), the near click goes on the lowest point of the shaft that shows and `h`
+   marks it *entry hidden*. `gate.py` counts the hidden entries per view (R3) and splits the front
+   photo's error into visible and hidden entries (R2).
 3. Triangulate each shaft from two views against the face plane (intrinsics from EXIF, or from
    decomposing the ring homography) and compare that with the single-view tip.
 4. Pull the arrows, photograph the holes straight on, and use them as ground truth.
 
 ### The verdicts, decided now rather than argued about later
+
+*The rings fit* in a photo when the red and blue edges each sit within 1.0 mm RMS of their nominal
+circles (`RING_FIT_MAX_RMS_MM` in `gate.py`, beside the 1.5 mm pass line). The verdicts read it over
+the three views only. The holes photo is checked against the same line, but it decides only whether
+the ground truth can be used: if its rings do not fit, the run gives no reading and the holes photo
+is retaken.
 
 1. **Rings fit automatically in all three views, two-view error ≤ 1.5 mm, shafts found
    automatically in most views.** → Phase 1 builds it on the phone with classical vision: OpenCV on
@@ -134,7 +143,8 @@ Red and blue fit to 0.15–0.24 mm RMS in all four photos; gold only in the two 
 cover (0.5–0.7 mm against 7–10 mm). Entry error against the holes: front photo alone median 1.21 mm,
 worst 2.82 mm; two or three views median 0.85 mm, worst 1.60 mm, and one of the six scored a zone low.
 The worst two-view arrows are those whose shaft planes meet the face at a narrow angle (15° and
-27°), so a fourth photo should be asked for by that angle, not by count. This proves the arithmetic,
+27°), so a fourth photo should be asked for by that angle, not by count. `synth.py` marks no entry
+hidden, so the run's R3 is zero in every view. This proves the arithmetic,
 not the method: a rendered face has perfect colours, a flat sheet and straight shafts.
 
 ### The verdict, taken *(date)*
@@ -228,6 +238,6 @@ Read for this phase on 2026-11-11.
 | # | Reading | Command | Result |
 | --- | --- | --- | --- |
 | R1 | Rings fit automatically in each of the three views, with the residual in mm | `uv run --script tools/gate/gate.py tools/gate/runs/<date>` after `click.py` | *(not taken)* |
-| R2 | Median and worst entry-point error, single view against two views, against the holes | the same run | *(not taken)* |
-| R3 | How many of the six entry points each view hides | the same run's *seen in* column | *(not taken)* |
+| R2 | Median and worst entry-point error against the holes: front view alone (split into visible and hidden entries) against two views | the same run | *(not taken)* |
+| R3 | How many of the six entry points each view hides | the same run's R3 table, from the near clicks marked `h` in `click.py` | *(not taken)* |
 | R4 | Shafts found automatically by the line segment detector, out of 18 | not built yet: added once R1–R3 are read | *(not taken)* |
