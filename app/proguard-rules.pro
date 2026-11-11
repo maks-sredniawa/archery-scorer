@@ -11,24 +11,12 @@
 # What was checked here, and what covers it:
 #
 #   * **The manifest's classes.** AGP generates `aapt_rules.txt` from the merged manifest, which
-#     covers the application, the activity, every receiver and provider — and `android:backupAgent`,
-#     so `AppBackupAgent` is kept without a rule here. Worth confirming rather than assuming: its
-#     failure mode is a backup that silently does nothing.
+#     covers the application, the activity, every receiver and provider.
 #
-#   * **Workers, across versions.** `androidx.work` ships `-keepnames class * extends
-#     androidx.work.ListenableWorker`, which is the rule that matters most: WorkManager persists the
-#     worker's *class name* in its own database, so a sweep enqueued by 1.0 must still resolve after
-#     the update to 1.1. `-keepnames` is what makes the name stable release to release.
-#
-#   * **Room.** `-keep class * extends androidx.room.RoomDatabase` plus R8's own handling of the
-#     `Class.forName(… + "_Impl")` lookup. `AppDatabase_Impl` stays unrenamed. The DAOs are renamed,
-#     which is fine — nothing looks them up by name.
-#
-#   * **kotlinx.serialization** — the backup manifest and every Nav3 route key. The library ships R8
+#   * **kotlinx.serialization** — every Nav3 route key and the licence list. The library ships R8
 #     rules preserving the `Companion` field and the `serializer()` method, which is the reflective
 #     path `serializer(KClass)` takes. Renaming the *classes* is harmless: a `@Serializable` class's
-#     `serialName` is a string literal baked in at compile time, so the JSON in a user's archive does
-#     not change shape when R8 renames the class that reads it.
+#     `serialName` is a string literal baked in at compile time.
 #
 #   * **Enums stored by name** — the house rule, and the one that could silently rewrite history.
 #     R8 renames the constant *fields* but never the name string handed to the enum constructor,

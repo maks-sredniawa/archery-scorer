@@ -19,20 +19,14 @@ import kotlinx.coroutines.launch
 data class SettingsUiState(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val materialYou: Boolean = false,
-    val remindersEnabled: Boolean = false,
 )
 
 class SettingsViewModel(
     private val preferences: AppPreferences,
 ) : ViewModel() {
     val state: StateFlow<SettingsUiState> =
-        combine(
-            preferences.themeMode,
-            preferences.materialYou,
-            preferences.remindersEnabled,
-        ) { theme, materialYou, reminders ->
-            SettingsUiState(theme, materialYou, reminders)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+        combine(preferences.themeMode, preferences.materialYou, ::SettingsUiState)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
     /**
      * **Both halves, and in this order.**
@@ -49,10 +43,6 @@ class SettingsViewModel(
 
     fun setMaterialYou(enabled: Boolean) {
         viewModelScope.launch { preferences.setMaterialYou(enabled) }
-    }
-
-    fun setRemindersEnabled(enabled: Boolean) {
-        viewModelScope.launch { preferences.setRemindersEnabled(enabled) }
     }
 
     /**
@@ -73,8 +63,6 @@ class SettingsViewModel(
             viewModelFactory {
                 initializer {
                     val app = this[APPLICATION_KEY] as MainApplication
-                    // Preferences, not the container: Settings is reachable while the schema gate
-                    // is open, and forcing the container here would be forcing Room.
                     SettingsViewModel(app.preferences)
                 }
             }

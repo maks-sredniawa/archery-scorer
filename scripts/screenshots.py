@@ -12,16 +12,14 @@ inset arithmetic; this one's matrix is **theme x locale** and its deliverable is
 sequences are imported from it rather than copied: [SCENES] is the expensive asset in this repo and
 two drifting copies of it would both keep producing screenshots, just of the wrong screens.
 
-⚠ **[SCENES] describes the template's placeholder screens.** Rewrite it against your own the day the
-placeholder domain goes — until then a run walks to screens that do not exist, and the nightly
-edge-to-edge job reports a red that means nothing. That rewrite is the one edit that makes both
-scripts yours; everything else here is about the phone, not the app.
+[SCENES] describes this app's screens. Extend it as screens are added — that is the one edit that
+keeps both scripts walking the real app; everything else here is about the phone, not the app.
 
     scripts/screenshots.py --out docs/screenshots/before
     scripts/screenshots.py --out docs/screenshots/after
     scripts/screenshots.py --out DIR --theme light          # one cell
-    scripts/screenshots.py --out DIR --scene items,settings # one screen, while iterating
-    scripts/screenshots.py --out DIR --scene items,settings --numbered   # 1_items-en.png, 2_settings-en.png
+    scripts/screenshots.py --out DIR --scene score-end,settings # one screen, while iterating
+    scripts/screenshots.py --out DIR --scene score-end,settings --numbered   # 1_score-end-en.png, 2_settings-en.png
     scripts/screenshots.py --out DIR --build release --numbered --scene …  # the store set, see below
     scripts/screenshots.py --restore                        # hand the phone back
 
@@ -30,10 +28,10 @@ applicationId instead of `.debug`. The developer-only Settings section lives in 
 only the shipped build is free of it. That install is somebody's real app, so the flag also implies
 `--no-reseed` and the wipe refuses outright: the shots show whatever is really set up on it.
 
-Filenames carry the locale they were taken in — `items-pl.png`, not `items.png` — because a PNG loses
+Filenames carry the locale they were taken in — `score-end-pl.png`, not `score-end.png` — because a PNG loses
 the directory that used to carry its language the moment anyone moves it. See [locale_tag].
 
-`--numbered` additionally prefixes each file with its position in the `--scene` list — `1_items-pl.png`.
+`--numbered` additionally prefixes each file with its position in the `--scene` list — `1_score-end-pl.png`.
 Play orders a listing's screenshots by the order they are uploaded, and a file manager sorts
 alphabetically, so without the prefix the set sorts by scene name rather than by intent. The number
 comes from the order **asked for**, not from [SCENES], which is why `--scene` preserves its argument

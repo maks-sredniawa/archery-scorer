@@ -41,40 +41,34 @@ let us do otherwise".">
 | --- | --- |
 | Kotlin, Jetpack Compose, Material 3 | Android only, `minSdk` 26 |
 | **Navigation 3** (`androidx.navigation3`) | Replaces Navigation Compose 2.x — don't reintroduce the old one |
-| Room via KSP | DAOs return `Flow`; schema evolution per ADR-0001 |
 | Manual DI via `AppContainer`, **not Hilt** | Constructor injection is clearer at this size and easy to migrate later |
-| WorkManager + exact alarms | Two mechanisms on purpose — ADR-0003 |
-| Photo Picker + `TakePicture` intent, **not CameraX** | Far less code; the system camera is fine here |
+| `TakePicture` intent, **not CameraX** | No `CAMERA` permission; Phase 1 decides whether a guided capture is worth it |
 | Coil 3 images | Compose-native, local files only |
 | Play Billing (`tip/`), for the tip only | Unlocks nothing; adds `BILLING`, and its merged `INTERNET` is removed — ADR-0007 |
-| On-device storage only | No backend. Backup per ADR-0005 |
+| On-device storage only: DataStore and image files | No backend and no database. Platform Auto Backup per ADR-0005 |
 
 ## House rules
 
-- **An update never loses a user's data.** Any change to `APP_SCHEMA_VERSION` ships with its
-  `MIGRATION_x_y` *registered in* `APP_MIGRATIONS`, the exported `app/schemas/*/N.json` committed, a
-  `SchemaGateTest` assertion that the launch gate lets the upgrade through, and a migration test that
-  proves the rows survive. `scripts/schema-gate.py` enforces the mechanical half in CI.
-  **Every migration test opens the database directly and so walks past the launch gate** — that is
-  how an app ships a refusal screen to every existing install with a green test run behind it.
-  Verify an upgrade on the phone, not only in a test.
+- **An update never loses a user's data.** There is no database: the day a feature adds a table,
+  Room and ADR-0001's launch gate come back with it, and so does the parked schema gate in
+  [`docs/DOD.md`](docs/DOD.md). Until then a stored key's name and shape are the contract — see
+  *Adding a preference*. Verify an upgrade on the phone, not only in a test.
 - **A branch merges with every shipped language complete.** Adding an English string does *not*
   redden your build — completeness is a merge gate (`scripts/translation-gate.py`), not a test, so
   copy is translated **once** rather than against draft wording and again after review. Everything
   else about a translation — format arguments, plural categories per CLDR, orphans,
   `translatable="false"` — is `TranslationTest` and holds continuously. Translate from **English
   only**, per [`docs/translator-brief.md`](docs/translator-brief.md).
-- **Media paths in the DB are relative** and split by kind — `thumbnails/<uuid>.jpg`,
+- **Stored media paths are relative** and split by kind — `thumbnails/<uuid>.jpg`,
   `photos/<uuid>.jpg`, `documents/<uuid>.jpg` — resolved against `filesDir` at read time. Absolute
-  paths change across installs and break restored backups; the split makes the backup export scopes a
-  list of directories.
+  paths change across installs and break restored backups.
 - **All image writes go through `media/MediaFiles.kt`** — it downsamples and re-encodes per kind,
-  bakes in EXIF rotation, strips metadata (GPS included), and writes the file before the row.
-  Bypassing it puts full-resolution bitmaps in memory and blows up any image grid.
+  bakes in EXIF rotation, strips metadata (GPS included), and writes the file before anything
+  records its path. Bypassing it puts full-resolution bitmaps in memory.
 - **Missing media renders as a placeholder, never a crash.** A restore may legitimately lack files.
-- **DAOs return `Flow`**, screens collect it. Don't hand-roll refresh calls.
-- **Enums with `TypeConverter`s, not loose strings**, for closed vocabularies. Store enums by
-  **name, never ordinal**, so adding a value can't rewrite history.
+- **Stores return `Flow`**, screens collect it. Don't hand-roll refresh calls.
+- **Enums, not loose strings**, for closed vocabularies. Store enums by **name, never ordinal**, so
+  adding a value can't rewrite history.
 - **A new preference follows *Adding a preference* in `data/AppPreferences.kt`.** A list the user
   makes is JSON under one key, not a table — [`docs/optional-modules.md`](docs/optional-modules.md),
   *How to decide*.
@@ -82,8 +76,7 @@ let us do otherwise".">
 - **Developer-only surface lives in `app/src/debug/`, never in `main/` behind `BuildConfig.DEBUG`.**
   With `isMinifyEnabled = false` a statically-false branch is still compiled into the release AAB —
   a hide, not a strip — and its strings are still inside the translation gate. Each seam is one
-  file per variant with a no-op in `src/release/`: `ui/settings/DebugSettings.kt` and
-  `ui/wipe/SchemaMismatchContinue.kt`.
+  file per variant with a no-op in `src/release/`: `ui/settings/DebugSettings.kt`.
 - **Colours come from `MaterialTheme`, never literals.** The palette is generated from four seeds by
   `scripts/gen_scheme.py`; edit the seeds and regenerate, never a single role.
 - **Spacing comes from `theme/Spacing.kt`.** Six steps on a 4dp grid; no screen invents a seventh.
@@ -94,7 +87,7 @@ let us do otherwise".">
 ./gradlew assembleDebug          # build
 ./gradlew installDebug           # build + install on the connected phone
 ./gradlew test                   # JVM unit tests
-./gradlew connectedAndroidTest   # instrumented Room/DAO tests — needs a device
+./gradlew connectedAndroidTest   # instrumented tests (MediaFilesTest) — needs a device
 ./gradlew lint
 ./gradlew spotlessApply          # format (the CI gate is spotlessCheck)
 ./gradlew assembleDebug -PreleaseShapedDebug   # debug id, R8 on — find minification bugs early
@@ -114,19 +107,15 @@ app/src/main/java/<namespace>/
   MainActivity.kt, MainApplication.kt, AppContainer.kt, Navigation.kt, NavigationKeys.kt
                the app shell and Nav3 wiring stay at the package root, not under ui/ — they describe
                how the app hangs together rather than any one screen
-  AppBackupAgent.kt   Android Auto Backup, taking control of its own file set (ADR-0005)
-  data/        Room entities, DAOs, database, converters, migrations, the schema gate, preferences
-  data/backup/ export, restore, the manifest, the WAL checkpoint
+  data/        preferences (DataStore)
   media/       MediaFiles.kt — the single path for persisting images, kind-aware
   theme/       generated palette, type scale, spacing, the night-mode window half
   tip/         the tip through Play Billing, held by AppContainer so a purchase finishes after its
                screen is gone, and the rule for its one ask on the home screen (ADR-0007)
-  ui/          Compose screens + ViewModels, one package per area
-  work/        WorkManager, receivers, notification channels, permission asks
+  ui/          Compose screens + ViewModels, one package per area; ui/score/ is the home screen
 
-app/src/debug/    the developer-only build: the sample-data seeder, Settings' debug section and its
-                  strings, the schema-mismatch screen's continue button, and SeedReceiver for the
-                  capture driver
+app/src/debug/    the developer-only build: Settings' debug section (empty until there is something
+                  to seed) and the debug app name
 app/src/release/  only the no-op half of each seam, so main/ can call it unconditionally
 scripts/          the Python toolchain. project.py is the one place the app's identity lives
 tools/gate/       phase 0's photo-scoring gate, throwaway Python outside the app (docs/phase-0.md)
@@ -167,15 +156,8 @@ most time, and none of it is discoverable from the code. What belongs here:>
   ```
   and for a brand-new `applicationId`, `adb push` the APK to `/sdcard/Download/` and tap it in the
   file manager.
-- **Xiaomi kills background work aggressively.** Scheduled notifications need battery-optimisation
-  exemption and **autostart**, and autostart is the load-bearing one: without it the ROM does not
-  start the process for a broadcast at all. It has no appop, it is a Settings toggle, and the grant
+- **Xiaomi kills background work aggressively.** Nothing here runs in the background today;
+  anything that does later needs battery-optimisation exemption and **autostart**, and autostart is
+  the load-bearing one: without it the ROM does not start the process for a broadcast at all. It has no appop, it is a Settings toggle, and the grant
   **lapses on its own** — re-read it before any run that depends on it. `scripts/device-gate.py`
   reads and sets it.
-- **Two device readings look identical to a pass when they are nothing at all.** A database pulled
-  without its `-wal` sidecar is **stale** — the app's most recent writes sit in the WAL, so a deleted
-  row still reads as present. Pull both and `PRAGMA wal_checkpoint(TRUNCATE)` on the host. And
-  `cmd jobscheduler run -f -n androidx.work.systemjobscheduler <pkg> <id>` answers *"Could not find
-  job N"* on stderr and **exits 0**: `am force-stop` cancels the app's jobs and WorkManager
-  re-enqueues under a new id at the next launch, so read the id from `dumpsys jobscheduler` and
-  confirm `WM-WorkerWrapper: Starting work for …` in logcat before believing any sweep result.

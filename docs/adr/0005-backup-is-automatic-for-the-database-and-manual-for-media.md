@@ -77,3 +77,34 @@ system — for a feature the platform already provides.
   the format.
 - Media is merged rather than replaced on restore: filenames are UUIDs, so a collision means the same
   file, and keeping files the archive does not mention costs disk where deleting them costs photos.
+
+## Amendment, 2026-11-11: platform Auto Backup, nothing manual
+
+Archery Scorer has no database and keeps no history, so there is nothing a user would need to
+export. The export and restore screen, `data/backup/`, the custom `AppBackupAgent` and
+`scripts/upgrade-diff.py` were deleted before the first upload
+([`optional-modules.md`](../optional-modules.md)), and the manifest now declares `allowBackup` with
+no agent and no extraction rules: Android's own Auto Backup copies every file the app keeps.
+
+**Photos are files in `filesDir`, so Auto Backup copies them too**, against its 25 MB quota. Today
+nothing writes one. Phase 1 decides whether a photo outlives its scored end; the default is to delete
+it once the end is confirmed. A version that keeps photos must either exclude their directory with
+`android:dataExtractionRules` or show that the quota holds, because over it Android silently stops
+backing the app up at all.
+
+**Every DataStore key now reaches the user's next phone**, because exclusions are per file and the
+preferences are one file. Each key was asked what it means there:
+
+- `theme_mode`, `material_you`: settings, welcome on the next phone.
+- `onboarding_done`: a first run that was finished; carrying it is right.
+- `tip_asked`: the user's answer to the one tip ask. Carried over, it stays answered, where the
+  agent used to leave it behind and ask again after a month (ADR-0007, amended the same day).
+- `ends_scored`: the tip ask's measure of use. Carried over, it says the archer already uses the
+  app, which is true.
+- The app language: AppCompat's own file below Android 13, the platform's on 13+; both a setting.
+
+None is live state. The rule for the first one that is ("an end is half scored"): judge it at the
+read, against something the platform never backs up, such as `PackageInfo.firstInstallTime`.
+
+The manual export comes back with kept rounds, if the owner ever wants them, and with it the quota
+reasoning above.

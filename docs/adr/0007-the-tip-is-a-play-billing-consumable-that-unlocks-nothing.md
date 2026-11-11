@@ -71,3 +71,16 @@ Billing, and it unlocks nothing.**
 - **One more dependency and one more permission**: the billing library, `lifecycle-process`, and
   `BILLING` in the artifact. The licences screen links Google's terms for the Play services artifacts
   billing brings in; their text is not ours to ship.
+
+## Amendment, 2026-11-11: the ask counts ends, and lives on the Score an end screen
+
+The placeholder domain was deleted, and with it the items screen the one-time ask lived on and the
+ten recorded items it counted. The card is now on the home screen, **Score an end**, and is due once
+the app has been installed 30 days **and ten ends have been scored** (`tip/TipAsk.kt`), counted in
+the `ends_scored` preference. Nothing increments that count until Phase 1 scores an end, so the card
+cannot appear before the feature it measures exists.
+
+The answer no longer stays behind on a move. The custom backup agent is gone (ADR-0005, amended the
+same day), so Auto Backup carries `tip_asked` to the next phone and an answered ask stays answered
+there; `firstInstallTime` still makes a new phone wait its own month before an unanswered ask can
+show. `ACCESS_NETWORK_STATE` now belongs to billing alone, since WorkManager went (ADR-0003).

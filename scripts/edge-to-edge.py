@@ -177,12 +177,6 @@ def api_level() -> int:
 # wrong name — see [usable_configs].
 GESTURE_MIN_API = 29
 
-# `POST_NOTIFICATIONS` is Android 13. Below it the permission does not exist, `pm grant` fails with
-# a non-zero exit, and there is nothing to grant anyway: notifications are on until an owner turns
-# them off, so the banner the grant below exists to avoid cannot appear. The first nightly matrix
-# run died here on API 26, one minute in.
-POST_NOTIFICATIONS_MIN_API = 33
-
 # Per-app languages are Android 13, and so is `cmd locale set-app-locales`. Below it there is no
 # per-app locale to hand back, and `shell()` raising on the missing command would kill `--restore`
 # (here and in `screenshots.py`) before it put rotation and Do Not Disturb back.
@@ -788,8 +782,8 @@ def relaunch() -> None:
 # it is exactly the question "is a top-level destination on screen?" — and [HOME_TAB] is the bar's
 # first item, the one the back stack is rooted at. Naming them here rather than inline is what lets
 # a locale run translate them with the rest of the table.
-TAB_BAR = "Items"
-HOME_TAB = "Items"
+TAB_BAR = "Score"
+HOME_TAB = "Score"
 
 # The top-level destinations, named so [tap] can tell a tab from anything else it is asked to
 # press. Two things follow from being on this list, and both are about a tab label being a *short*
@@ -1223,22 +1217,6 @@ def reset_to_seeded() -> None:
         # the sample-data block is the debug-only tail of a scrolling Settings column.
         tap(label)
     settle(1.0)
-
-    # Last, because `pm grant` can kill the process and everything above is a tap sequence that
-    # would die with it. Every caller relaunches before its next screenshot, so the app picks the
-    # permission up cleanly.
-    #
-    # `pm clear` revokes POST_NOTIFICATIONS, and a denied notification permission is *visible*: a
-    # screen that explains it grows a "notifications are off" banner, and its button's label can
-    # collide with a needle a later scene taps — which then launches the system's notification
-    # settings, so the next scene photographs the Settings app and the one after fails with an empty
-    # node list, the foreground no longer being this package. Granting it back is also the honest
-    # state: a seeded install stands in for an app
-    # in use, not for one whose permission was just refused. The `empty` suite is the deliberate
-    # exception and keeps the denied state, because there it is the truth of a first run.
-    if api_level() >= POST_NOTIFICATIONS_MIN_API:
-        shell(f"pm grant {PACKAGE} android.permission.POST_NOTIFICATIONS")
-        settle(0.5)
     global _SEEDED
     _SEEDED = ""
 
@@ -1438,50 +1416,18 @@ class Scene:
 
 # The order matters only in that each scene starts from a relaunch, so they are independent.
 SCENES = [
-    # --- the screen with no Scaffold at all, reachable only by lying to the schema guard --------
-    #
-    # `SchemaMismatchScreen` is the one screen outside a `Scaffold` — it pads itself — so it is
-    # exactly the outlier this matrix exists to look at, and there is no route to it through the UI.
-    Scene(
-        "schema-mismatch",
-        "chrome-free",
-        [("fake_schema_mismatch", "")],
-        suite="mismatch",
-    ),
-    Scene(
-        "schema-mismatch-bottom",
-        "chrome-free",
-        [("fake_schema_mismatch", ""), ("swipe_end", "")],
-        suite="mismatch",
-    ),
-
     # --- a wiped install: the empty states, which no seeded run can show ------------------------
-    Scene("items-empty", "tab", [("wipe", "")], suite="empty"),
+    Scene("score-end-empty", "tab", [("wipe", "")], suite="empty"),
 
     # --- the tabs ------------------------------------------------------------------------------
-    Scene("items", "tab", []),
-    Scene("items-bottom", "tab", [("swipe_end", "")]),
+    Scene("score-end", "tab", []),
     Scene("settings", "tab", [("tap", "Settings")]),
     Scene("settings-bottom", "tab", [("tap", "Settings"), ("swipe_end", "")]),
 
     # --- detail screens: no bottom bar, so the navigation-bar inset is the app's own problem ----
-    Scene("item-detail", "detail", [("tap", "First item")]),
-    Scene("backup", "detail", [("tap", "Settings"), ("tap", "Backup and restore")]),
     Scene("support", "detail", [("tap", "Settings"), ("tap", "Help and feedback")]),
     Scene("licences", "detail", [("tap", "Settings"), ("tap", "Open-source licences")]),
     Scene("licences-bottom", "detail", [("tap", "Settings"), ("tap", "Open-source licences"), ("swipe_end", "")]),
-
-    # --- forms: the keyboard is an inset too, and this is where `imePadding` is proved ----------
-    Scene("item-editor", "form", [("tap", "Add an item")]),
-    Scene("item-editor-bottom", "form", [("tap", "Add an item"), ("swipe_end", "")]),
-    Scene(
-        "item-editor-keyboard",
-        "form",
-        # Focus the first field and wait for the keyboard to finish animating in. This is the scene
-        # that catches a window being *panned* instead of resized — the top bar, Save button and all,
-        # slides off the top of the screen and only a screenshot shows it.
-        [("tap", "Add an item"), ("tap_field", "0"), ("wait", "1.5")],
-    ),
 ]
 
 
@@ -1505,9 +1451,9 @@ DEBUG_RES_DIR = Path(__file__).resolve().parent.parent / "app" / "src" / "debug"
 # stages none; leave it as None until yours does, and see `Scene.keeps_seeded_prompt`.
 PROMPT_DISMISS: "str | None" = None
 
-# The walk from a wiped install to the seeded fixture: into Settings and through the debug-only
-# sample-data block at the end of it. Extend this as your app grows a first-run wizard in front of it.
-SEED_WALK = ("Settings", "Seed sample data")
+# The walk from a wiped install to the seeded fixture. Empty while there is no sample data to seed;
+# extend it as the app grows a first-run wizard or a debug seeder in front of it.
+SEED_WALK: tuple[str, ...] = ()
 
 
 def require_bcp47(tag: str) -> None:

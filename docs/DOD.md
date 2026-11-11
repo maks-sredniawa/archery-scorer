@@ -4,7 +4,11 @@ The **live checklist**. Keep it short: when an item closes, tick it, write the *
 long-form record you keep, and delete the detail from here. A session should be able to pick up the
 work by reading this file alone.
 
-## The standing schema gate — never ticked, checked at every bump
+## The standing schema gate — *parked*
+
+**Parked 2026-11-11: the app has no database.** Room went in the strip (`optional-modules.md`), so
+there is no `APP_SCHEMA_VERSION` to bump. The gate comes back, as written below, the day a feature
+adds a table.
 
 **An update must migrate an existing install without losing anything** (ADR-0001). This item does not
 close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release goes out:
@@ -30,9 +34,8 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 
 ## Before the first upload
 
-- [ ] **Delete what the app does not need**, while deleting is free — [`optional-modules.md`](optional-modules.md)
-      lists each module's files and the five places around the code a strip reaches. Room, photos,
-      backup and reminders are each a data-loss or Data safety story you will otherwise defend forever.
+- [x] **Delete what the app does not need.** Room, backup export/restore and reminders went 2026-11-11;
+      photos and the tip stay.
 - [ ] **Decide `minSdk` deliberately, before launch.** The direction is asymmetric: raising it later
       strands existing installs on the last build that fitted them, lowering it later is free. If the
       only phone in the loop sits at the top of the range, every `SDK_INT` branch below it ships
@@ -42,8 +45,8 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       `make-feature-graphic.py`. Commit the concept image and record its provenance in
       `art/README.md` — where the art came from is the thing most likely to block a first upload, and
       it is discovered late.
-- [ ] **Replace the placeholder domain.** `data/ItemEntity.kt` and `ui/items/` — or delete them
-      (above).
+- [x] **Replace the placeholder domain.** Items deleted 2026-11-11; the home screen is an empty
+      **Score an end** screen.
 - [ ] **Rewrite `scripts/edge-to-edge.py`'s SCENES** against your screens. Until then the nightly
       walks screens that do not exist, and `screenshots.py` cannot shoot a listing.
 - [ ] **Make the artifact allowlists yours.** `aab-permissions.py`'s EXPECTED, FORBIDDEN and
@@ -104,8 +107,7 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 ADR-0007. The code is in; these are the parts only Play and a phone can prove. The steps are
 *Selling the tip* in [`RELEASING.md`](RELEASING.md).
 
-- [ ] **Keep it or delete it, before the first upload.** Deleting is in
-      [`optional-modules.md`](optional-modules.md); keeping it costs Brazil's rating (14+).
+- [x] **Keep it or delete it, before the first upload.** Kept (owner, 2026-11-11).
 - [ ] **A build with billing on internal testing**, then the four products created and active.
 - [ ] **One purchase from a licence tester** on the internal install, ending in the thank-you line,
       and the *same* tip bought again — the second purchase is the proof that the first was consumed.
