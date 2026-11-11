@@ -70,10 +70,10 @@ the face and can be moved, added or removed, and any arrow within about 2 mm of 
 | | Checkpoint | Merges | Depends on |
 | --- | --- | --- | --- |
 | **A** | **The gate**: can a few handheld photos of an end be scored to within 1.5 mm, automatically or nearly so? | `docs:` the verdict here | photos of a real end |
-| **B** | **The strip**: delete the modules section 2 names, amend their ADRs | `refactor:` | owner's yes on section 2 |
-| **C** | **The first face** and the scoring rules it needs, as a written table (section 3) | `docs:` | owner's answer on the face |
+| **B** ✅ | **The strip**: delete the modules section 2 names, amend their ADRs | `refactor:` | owner's yes on section 2 |
+| **C** | **The first face** and the scoring rules it needs, as a written table (section 3). Decided (owner, 2026-11-11) | `docs:` | owner's answer on the face |
 | **D** | **Palette and mark** | `feat:` | — |
-| **E** | **The placeholder domain becomes an empty *Score an end* screen** | `feat:` | B |
+| **E** ✅ | **The placeholder domain becomes an empty *Score an end* screen** | `feat:` | B |
 
 A goes first because verdict 3 vetoes the app as pitched. B waits only on the owner, not on A: none
 of the modules it removes is needed by any verdict.
@@ -153,22 +153,33 @@ not the method: a rendered face has perfect colours, a flat sheet and straight s
 
 ## 2. The strip: what goes, decided against the app's shape
 
-`optional-modules.md` lists the files; this is the proposal, waiting on the owner's yes.
+`optional-modules.md` lists the files. **Owner said yes on 2026-11-11 and the strip is done**: the
+app scores one end at a time and keeps no rounds or history. `spotlessCheck test lint assembleDebug`,
+`translation-gate.py`, `schema-gate.py` (*no database, nothing to gate*), the scripts' unit tests and
+all four `aab-*.py` checks on a release-shaped `bundleDebug` passed on the branch; `bundleRelease`
+needs the upload key, which does not exist yet.
 
-| Module | Proposal | Why |
+The androidTest set is now `MediaFilesTest` alone: `ItemDaoTest`, `MigrationTest`,
+`ManifestWiringTest` and `ShareChosenCallbackTest` went with Room, the reminders and the backup
+share. It keeps CI's instrumented job above zero tests.
+
+The tip's one ask now counts **ends scored** (`ends_scored` in `AppPreferences`), and nothing counts
+one until Phase 1 scores an end.
+
+| Module | Decision | Why |
 | --- | --- | --- |
 | Room and the schema gate | **Delete** | The idea scores an end; it keeps no rounds or history. If the owner wants rounds kept, Room stays instead: a round is ends joined to arrows, which is what a table is for. |
 | Photos (media pipeline) | **Keep** | The app takes photos. `TakePicture` and the `FileProvider` are the capture path until Phase 1 decides on CameraX. Whether photos are kept after scoring is Phase 1's call; the default is to delete them once the end is confirmed. |
 | Backup export/restore | **Delete**; Auto Backup takes over | Nothing to back up without history. Comes back with Room if rounds are kept. |
 | Reminders and WorkManager | **Delete** | No schedules in the idea. |
-| The tip | **Keep** unless the owner says otherwise | As in every MaksForge app. |
+| The tip | **Keep** | As in every MaksForge app. Its ask moves to the *Score an end* screen. |
 | Placeholder domain | **Replace** with an empty *Score an end* screen (E) | |
 
 ## 3. The first face
 
-**Proposal:** the single-spot ten-ring World Archery face, with the size as a parameter. 122, 80, 60
-and 40 cm are the same ten equal rings at different scales (ring width 6.1, 4, 3 and 2 cm), so one
-implementation covers outdoor and indoor. After it, the 80 cm six-ring face, then the vertical triple
+**Decision (owner, 2026-11-11):** the single-spot ten-ring World Archery face, with the size as a
+parameter. 122, 80, 60 and 40 cm are the same ten equal rings at different scales (ring width 6.1,
+4, 3 and 2 cm), so one implementation covers outdoor and indoor. After it, the 80 cm six-ring face, then the vertical triple
 spot with the compound inner ten. Field, 3D and non-WA faces are not in this plan.
 
 The rules the scoring function must get right, from World Archery Book 2 Art. 7.2.2 and Book 3
@@ -201,7 +212,8 @@ second arrow in a triple spot scored. Each one fails in the direction the archer
 
 ## Documents this phase amends
 
-ADR-0001, 0002, 0003, 0005 (each a dated amendment on the strip), `CONTEXT.md`, `CLAUDE.md`'s stack
+ADR-0001, 0003, 0005 and 0007 (each a dated amendment on the strip), ADR-0002 (a dated note that
+it stays), `CONTEXT.md`, `CLAUDE.md`'s stack
 table and layout, the privacy policy and `play-app-content.md` (photos are taken and scored on the
 device, never uploaded).
 
