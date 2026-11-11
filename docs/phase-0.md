@@ -71,7 +71,7 @@ the face and can be moved, added or removed, and any arrow within about 2 mm of 
 | --- | --- | --- | --- |
 | **A** | **The gate**: can a few handheld photos of an end be scored to within 1.5 mm, automatically or nearly so? | `docs:` the verdict here | photos of a real end |
 | **B** ✅ | **The strip**: delete the modules section 2 names, amend their ADRs | `refactor:` | owner's yes on section 2 |
-| **C** | **The first face** and the scoring rules it needs, as a written table (section 3). Decided (owner, 2026-11-11) | `docs:` | owner's answer on the face |
+| **C** ✅ | **The first face** and the scoring rules it needs, as written rules (section 3). Decided (owner, 2026-11-11) | `docs:` | owner's answer on the face |
 | **D** | **Palette and mark** | `feat:` | — |
 | **E** ✅ | **The placeholder domain becomes an empty *Score an end* screen** | `feat:` | B |
 
@@ -169,7 +169,7 @@ one until Phase 1 scores an end.
 | Module | Decision | Why |
 | --- | --- | --- |
 | Room and the schema gate | **Delete** | The idea scores an end; it keeps no rounds or history. If the owner wants rounds kept, Room stays instead: a round is ends joined to arrows, which is what a table is for. |
-| Photos (media pipeline) | **Keep** | The app takes photos. `TakePicture` and the `FileProvider` are the capture path until Phase 1 decides on CameraX. Whether photos are kept after scoring is Phase 1's call; the default is to delete them once the end is confirmed. |
+| Photos (media pipeline) | **Keep** | The app takes photos. `TakePicture` and the `FileProvider` are the capture path until Phase 1 decides on CameraX. Whether photos are kept after scoring is Phase 1's call; the default is to delete them once the end is confirmed. `MediaKind.Photo` in `MediaFiles` downsamples to a 2048 px long edge and strips EXIF, while the scorer needs full resolution and the camera's focal length from EXIF for millimetre precision, so Phase 1 captures for scoring outside that path or extends it. |
 | Backup export/restore | **Delete**; Auto Backup takes over | Nothing to back up without history. Comes back with Room if rounds are kept. |
 | Reminders and WorkManager | **Delete** | No schedules in the idea. |
 | The tip | **Keep** | As in every MaksForge app. Its ask moves to the *Score an end* screen. |
