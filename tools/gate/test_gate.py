@@ -80,6 +80,27 @@ class FakeEndTest(unittest.TestCase):
         self.assertAlmostEqual(report["median_front_hidden_mm"], float(np.median(errors[:2])))
         self.assertAlmostEqual(report["median_front_visible_mm"], float(np.median(errors[2:])))
 
+    def test_a_holes_photo_without_rings_is_no_reading_not_a_stale_pass(self):
+        self.gate()
+        holes = self.run_dir / "holes.jpg"
+        original = holes.read_bytes()
+        cv2.imwrite(str(holes), np.full((900, 1200, 3), 200, np.uint8))
+        try:
+            result = subprocess.run([sys.executable, str(HERE / "gate.py"), str(self.run_dir)], capture_output=True)
+        finally:
+            holes.write_bytes(original)
+        self.assertEqual(result.returncode, 1)
+        report = json.loads((self.run_dir / "report.json").read_text())
+        self.assertIsNone(report["passed"])
+        self.assertFalse(report["holes_fit"])
+
+    def test_a_folder_without_clicks_says_so(self):
+        with tempfile.TemporaryDirectory() as empty:
+            result = subprocess.run([sys.executable, str(HERE / "gate.py"), empty], capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("run click.py", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+
 
 class ClickTest(unittest.TestCase):
     def run_script(self, events, steps, pairs):

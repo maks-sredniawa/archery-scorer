@@ -73,7 +73,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("run", type=Path)
     args = parser.parse_args()
-    clicks = json.loads((args.run / "clicks.json").read_text())
+    clicks_path, report_path = args.run / "clicks.json", args.run / "report.json"
+    if not clicks_path.is_file():
+        raise SystemExit(f"no {clicks_path}: run click.py (or synth.py) on this folder first")
+    report_path.unlink(missing_ok=True)
+    clicks = json.loads(clicks_path.read_text())
     face = Face(clicks.get("face_mm", 400.0), clicks.get("line_mm", 1.0))
     shaft = float(clicks["shaft_mm"])
     console.print(Panel(f"Phase 0 gate · {args.run} · {face.diameter_mm / 10:.0f} cm face · shaft {shaft} mm", expand=False))
@@ -88,13 +92,16 @@ def main() -> None:
         ok = fits(fit)
         fitted.append(ok)
         cells = [f"{fit.residual_mm[n]:.2f}" for n in ("gold", "red", "blue")] if fit.plane else ["-"] * 3
-        rings.add_row(label, *cells, "yes" if ok else f"no {fit.reason}".strip())
+        rings.add_row(label, *cells, "yes" if ok else fit.reason or "no")
         planes.append(fit.plane)
     console.print(rings)
     view_planes, holes_plane = planes[:-1], planes[-1]
     views_fit, holes_fit = all(fitted[:-1]), fitted[-1]
     if holes_plane is None or not any(view_planes):
-        console.print("[red]Rings did not fit where they had to; no entry point can be computed.[/red]")
+        reason = "NO READING: retake the holes photo" if holes_plane is None else "rings found in no view"
+        console.print(f"[red]{reason}; no entry point can be computed.[/red]")
+        report_path.write_text(json.dumps({"passed": None, "rings_fit": views_fit, "holes_fit": holes_fit,
+                                           "reason": reason}, indent=2))
         raise SystemExit(1)
 
     holes = [holes_plane.to_face(p) for p in clicks["holes"]["arrows"]]
@@ -166,7 +173,7 @@ def main() -> None:
             expand=False,
         )
     )
-    (args.run / "report.json").write_text(json.dumps({"passed": passed if holes_fit else None, "rings_fit": views_fit,
+    report_path.write_text(json.dumps({"passed": passed if holes_fit else None, "rings_fit": views_fit,
                                                        "holes_fit": holes_fit,
                                                        "ring_fit_max_rms_mm": RING_FIT_MAX_RMS_MM,
                                                        "median_front_mm": median_single,
