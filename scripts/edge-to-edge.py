@@ -1213,8 +1213,6 @@ def reset_to_seeded() -> None:
     """
     wipe()
     for label in SEED_WALK:
-        # `tap` scrolls when it cannot find its target, which is what reaches *Add the sample data*:
-        # the sample-data block is the debug-only tail of a scrolling Settings column.
         tap(label)
     settle(1.0)
     global _SEEDED
