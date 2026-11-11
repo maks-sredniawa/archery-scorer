@@ -172,7 +172,7 @@ def fit_rings(image_bgr: np.ndarray, f_px: float, face: Face, ref_px) -> RingFit
     k = intrinsics(f_px, w, h)
     masks = lab_masks(image_bgr)
     radii = face.fitted_boundaries()
-    fits, points, ellipses = {}, {}, {}
+    fits, points = {}, {}
     inside = None
     for name in ("blue", "red", "gold"):
         pts = region_boundary(masks[name], inside)
@@ -181,7 +181,7 @@ def fit_rings(image_bgr: np.ndarray, f_px: float, face: Face, ref_px) -> RingFit
                 break
             return RingFit(None, {}, f"no {name} region found")
         ellipse, kept = robust_ellipse(pts)
-        fits[name], points[name], ellipses[name] = ellipse_conic(ellipse), kept, ellipse
+        fits[name], points[name] = ellipse_conic(ellipse), kept
         inside = ellipse_region(image_bgr.shape, ellipse)
 
     c, horizon = centre_and_horizon(fits["red"], fits["blue"])
