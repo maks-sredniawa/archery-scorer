@@ -17,10 +17,10 @@ is the one with the widest reach.
 import sys
 from hct import TonalPalette, argb_from_hex, hex_from_argb, xyz_from_argb
 
-SEED_PRIMARY = "4C6FA5"    # Slate blue
-SEED_SECONDARY = "6B7A8F"  # Muted steel
-SEED_TERTIARY = "9A6BA5"   # Heather
-SEED_NEUTRAL = "DCDFE4"    # Cool grey
+SEED_PRIMARY = "2F6B4A"    # Range green
+SEED_SECONDARY = "5C6E63"  # Grey-green
+SEED_TERTIARY = "7A5C8E"   # Heather
+SEED_NEUTRAL = "E2E5E1"    # Near-grey, faintly green
 
 PACKAGE = "app.archeryscorer"  # the Kotlin package root; bootstrap.py rewrites this
 
