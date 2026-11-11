@@ -1,8 +1,6 @@
 """The mark: a tight group of three arrow holes inside a ring, the single definition of this app's identity.
 
-Both generators import it, so the launcher icon, the notification icon and the feature graphic
-cannot drift into being different marks. Drawn from circles in code, nothing traced: provenance in
-`art/README.md`.
+See `art/README.md` for why it is the single source and where it came from.
 
 Coordinates are in arbitrary units around an origin at the mark's centre; callers fit them to their
 own canvas with `fit()`. y grows downward, as it does in both SVG and PIL.

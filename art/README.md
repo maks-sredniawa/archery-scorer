@@ -8,7 +8,7 @@ the `VectorDrawable`s.
 | --- | --- | --- |
 | `mark.py`'s PARTS | circles drawn in code; no concept image | the Group mark |
 | `drawable/ic_launcher_{background,foreground,monochrome}.xml`, `drawable/ic_notification.xml`, `mipmap-*`, `play-icon-512.png` | `mark.py` → `make-launcher-icon.py` | generated |
-| `play-feature-graphic.png`, `play-feature-graphic-<tag>.png` (1024×500, one per translated listing; `COPY`) | `mark.py` + `theme/Color.kt` (+ `feature-background.png` if present) → `make-feature-graphic.py` | generated |
+| `play-feature-graphic.png`, `play-feature-graphic-<tag>.png` (1024×500, one per translated listing; `COPY`) | `mark.py` + `theme/Color.kt` (+ `feature-background.png` if present) → `make-feature-graphic.py` | generated, but still the template's until Phase N regenerates it |
 | `play-screenshots/<n>_<scene>-<tag>.png` | `scripts/screenshots.py --build release --numbered` → `pad-screenshot.py` | — |
 
 ## The mark
@@ -31,7 +31,8 @@ and the ring gap and the holes are real holes. Ground `105132` is the dark schem
 - Take the colours from the app's generated scheme (`scripts/gen_scheme.py`) rather than picking
   them for the icon, so the identity and the app agree. **Judge the ground at 44dp on a real home
   screen, light and dark**: a dark tone of a warm hue is brown, and a gradient's middle is the same
-  brown at launcher size. A flat mid-tone role (`surfaceVariant`) under `primary` is what survived.
+  brown at launcher size. A flat ground with no gradient is what survives; here it is the dark
+  scheme's `primaryContainer`, a green dark enough to read as green, not brown.
 - The feature graphic **reads its colours out of `theme/Color.kt`**, so a regenerated palette
   reaches the listing by re-running the script. Pasted inks stay the old hue on a ground that moved.
 - **The hole must be a real hole in the path**, not a shape painted in the background colour. A
