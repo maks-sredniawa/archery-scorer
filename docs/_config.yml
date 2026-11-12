@@ -15,7 +15,7 @@ remote_theme: maks-sredniawa/pages-theme
 plugins:
   - jekyll-remote-theme
 title: Archery Scorer
-description: Counts your archery score from a few photos of the target, so you don't have to tally the arrows by hand.
+description: Counts your archery score from a few photos of the target, so you don't tally the arrows by hand.
 maksforge:
   icon: /assets/icons/archery-scorer.webp
   status: building

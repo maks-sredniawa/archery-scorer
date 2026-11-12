@@ -59,6 +59,7 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       receiving Gmail's *Send mail as* entry, confirmed. Send *Report a problem* from a non-Gmail
       account and check it lands outside Spam. One address everywhere — the listing's contact field
       and IARC's rating contact too; `SupportHandoff.kt` says why it lives on our own domain.
+      *Send mail as* confirmed and the signature set, 2026-11-12; the non-Gmail test is still owed.
 - [x] **Write the listing.** `docs/store-listing.md`, English and Polish, 2026-11-12. Every heading in
       it is parsed by a script.
       The Console's *Review* step then asks for the AI-generated assets declaration: the owner's to make.
