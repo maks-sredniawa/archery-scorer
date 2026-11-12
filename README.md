@@ -7,9 +7,9 @@ Every feature is free. No ads, no account.
 
 ## Status
 
-Just bootstrapped from [android-starter](https://github.com/maks-sredniawa/android-starter). The release
-pipeline and quality gates are real; the screens are still the template's placeholder app. Nothing
-is on Play yet.
+In development. The release pipeline uploads every release to Play's internal testing track, and the
+home screen is an empty *Score an end* screen: scoring from a photo is not built yet. Whether a phone
+can do it reliably is Phase 0's question ([`docs/phase-0.md`](docs/phase-0.md)).
 
 ## Contributing
 
