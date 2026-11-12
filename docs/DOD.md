@@ -82,9 +82,9 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       **None of this is inherited from the template** — GitHub copies files, never settings — and
       the build stays green while it is all still undone. **Write the PAT's expiry date into this
       item** the day you create it: when it lapses the release PR simply stops appearing.
-- [ ] **Create the service account and set `PLAY_SERVICE_ACCOUNT_JSON`** (`docs/RELEASING.md`) —
-      the one step CI cannot do for itself. No account permissions; two app permissions, on this
-      app only; no expiry date. The four `UPLOAD_*` secrets were set 2026-11-12.
+- [x] **Create the service account and set `PLAY_SERVICE_ACCOUNT_JSON`**, 2026-11-12:
+      `archery-scorer-play-ci` in its own Cloud project `archery-scorer-play`, invited with no
+      account permissions, the two app permissions on this app only, and no expiry date.
 - [ ] **Plan the closed test.** A new personal developer account reaches production only after a
       closed test — at the time of writing 12 testers opted in for 14 continuous days, then an access
       application. Recruit the testers before the build is ready, not after; `publish-play-closed.yml`
@@ -93,9 +93,8 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       list `only-me-Tester`, every closed test the group `testers-community@googlegroups.com` —
       never a per-app group or list. **The first closed release of a never-published app is made in
       the Console**; the workflow takes over after its approval ([`RELEASING.md`](RELEASING.md)).
-- [ ] **Decide the `applicationId` deliberately.** It is fixed the moment the Play entry is created —
-      not renameable, not transferable without losing every install and review. A new MaksForge app
-      is `com.maksforge.<app>`.
+- [x] **Decide the `applicationId` deliberately.** `com.maksforge.archeryscorer`, fixed by the Play
+      entry created 2026-11-12 (default listing language en-US, free).
 
 ## The tip — open until a real purchase is consumed
 
@@ -104,6 +103,7 @@ ADR-0007. The code is in; these are the parts only Play and a phone can prove. T
 
 - [x] **Keep it or delete it, before the first upload.** Kept (owner, 2026-11-11).
 - [ ] **A build with billing on internal testing**, then the four products created and active.
+      The build is there: 0.2.0, uploaded by `publish-play.yml` on 2026-11-12.
 - [ ] **One purchase from a licence tester** on the internal install, ending in the thank-you line,
       and the *same* tip bought again — the second purchase is the proof that the first was consumed.
 - [ ] **The debug build shows no tip section and no card.** Play has never heard of the `.debug`
