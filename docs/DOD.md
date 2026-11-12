@@ -75,18 +75,16 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [ ] **`LICENSE` and `README.md`.** Bootstrap wrote a source-available notice and a *Contributing*
       that refuses pull requests, or with `--licence reserved` a notice that grants nothing and a
       placeholder. Keep both or replace both; they must agree.
-- [ ] **Back up the upload keystore and its password** somewhere that is not this machine: losing
-      it means never being able to update the app on Play again. Then fill in *Backed up to* in
-      `RELEASING.md`'s *The upload key*.
+- [x] **The upload keystore**, created and backed up 2026-11-12: *The upload key* in `RELEASING.md`.
 - [ ] **Set up the GitHub repository** — `python3 scripts/repo-setup.py` does the ruleset and the
       merge setting; the release-please PAT is the one step it cannot do, and without it no
       release PR is ever opened. *Setting up a new repository* in [`RELEASING.md`](RELEASING.md).
       **None of this is inherited from the template** — GitHub copies files, never settings — and
       the build stays green while it is all still undone. **Write the PAT's expiry date into this
       item** the day you create it: when it lapses the release PR simply stops appearing.
-- [ ] **Set the five Play secrets and create the service account** (`docs/RELEASING.md`) — the
-      service account is the one step CI cannot do for itself. No account permissions; two app
-      permissions, on this app only; no expiry date.
+- [ ] **Create the service account and set `PLAY_SERVICE_ACCOUNT_JSON`** (`docs/RELEASING.md`) —
+      the one step CI cannot do for itself. No account permissions; two app permissions, on this
+      app only; no expiry date. The four `UPLOAD_*` secrets were set 2026-11-12.
 - [ ] **Plan the closed test.** A new personal developer account reaches production only after a
       closed test — at the time of writing 12 testers opted in for 14 continuous days, then an access
       application. Recruit the testers before the build is ready, not after; `publish-play-closed.yml`
