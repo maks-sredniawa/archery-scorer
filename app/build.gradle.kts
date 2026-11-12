@@ -81,7 +81,7 @@ android {
         // package name is fixed the moment the app entry is created. Deliberately allowed to differ
         // from `namespace` for that reason — see docs/adr/0002.
         applicationId = "com.maksforge.archeryscorer"
-        // Kept at 26 on purpose (owner, 2026-11-12): CI's API 26 instrumented leg is what validates the floor.
+        // CI's API 26 instrumented and edge-to-edge legs validate this floor; move them with it.
         minSdk = 26
         targetSdk = 36
         versionCode = gitVersionCode

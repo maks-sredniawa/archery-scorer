@@ -36,11 +36,7 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 
 - [x] **Delete what the app does not need.** Room, backup export/restore and reminders went 2026-11-11;
       photos and the tip stay.
-- [x] **Decide `minSdk` deliberately, before launch.** Kept at 26 (owner, 2026-11-12). The direction is asymmetric: raising it later
-      strands existing installs on the last build that fitted them, lowering it later is free. If the
-      only phone in the loop sits at the top of the range, every `SDK_INT` branch below it ships
-      unvalidated — the first app built from this template raised 26 to 33 for exactly that reason. Move CI's floor legs with it,
-      and write the reason beside `minSdk` in `app/build.gradle.kts`, where the next person to touch it reads it.
+- [x] **Decide `minSdk` deliberately, before launch.** Kept at 26 (owner, 2026-11-12).
 - [ ] **Regenerate the feature graphic** with the Group mark: `python3 art/make-feature-graphic.py`,
       once the listing copy is written. Deferred to Phase N (`phase-0.md` section 4): the template's
       copy runs into the new mark.
@@ -60,23 +56,19 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       account and check it lands outside Spam. One address everywhere — the listing's contact field
       and IARC's rating contact too; `SupportHandoff.kt` says why it lives on our own domain.
       *Send mail as* confirmed and the signature set, 2026-11-12; the non-Gmail test is still owed.
-- [x] **Write the listing.** `docs/store-listing.md`, English and Polish, 2026-11-12. Every heading in
-      it is parsed by a script.
-      The Console's *Review* step then asks for the AI-generated assets declaration: the owner's to make.
+- [x] **Write the listing.** `docs/store-listing.md`, English and Polish, category *Sports*, 2026-11-12.
 - [ ] **Capture the screenshots** with `scripts/screenshots.py` from a release-shaped build, in every
       listing language, into `art/play-screenshots/`. Play wants at least two before the first review.
 - [ ] **Put the app on maksforge.com.** Its icon goes at `assets/icons/<repo>.webp` in
       maks-sredniawa/maks-sredniawa.github.io, which the app's own site loads, and the app goes on that home
       page. Replace `description` in `docs/_config.yml` too: it is the tagline under the app's name.
-- [x] **Write the privacy policy** and confirm `maksforge.com/<repo>/privacy-policy`
+- [ ] **Write the privacy policy** and confirm `maksforge.com/<repo>/privacy-policy`
       serves it. Written 2026-11-12; serving it is checked after the merge. Play requires a *hosted* URL, and an offline app has no server of its own.
 - [ ] **Answer the Console's App content pages and write [`play-app-content.md`](play-app-content.md)
       in the same sitting** — the reasons are in front of you then and gone a week later. It moves in
       the same commit as the privacy policy, every time. Re-read *Target audience* after the content
       rating is submitted.
-- [x] **`LICENSE` and `README.md`.** Source-available kept (owner, 2026-11-12). Bootstrap wrote a source-available notice and a *Contributing*
-      that refuses pull requests, or with `--licence reserved` a notice that grants nothing and a
-      placeholder. Keep both or replace both; they must agree.
+- [x] **`LICENSE` and `README.md`.** Source-available kept (owner, 2026-11-12).
 - [x] **The upload keystore**, created and backed up 2026-11-12, and its four `UPLOAD_*` secrets
       set the same day: *The upload key* in `RELEASING.md`.
 - [ ] **Set up the GitHub repository** — `python3 scripts/repo-setup.py` does the ruleset and the
@@ -88,14 +80,8 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [x] **Create the service account and set `PLAY_SERVICE_ACCOUNT_JSON`**, 2026-11-12:
       `archery-scorer-play-ci` in its own Cloud project `archery-scorer-play`, invited with no
       account permissions, the two app permissions on this app only, and no expiry date.
-- [x] **Plan the closed test.** Recruiting testers is not a concern for this app (owner, 2026-11-12). A new personal developer account reaches production only after a
-      closed test — at the time of writing 12 testers opted in for 14 continuous days, then an access
-      application. Recruit the testers before the build is ready, not after; `publish-play-closed.yml`
-      moves each build to them. A tester-swap community, where developers test each other's closed
-      tests, filled the apps built from this template within days. Testers: internal is the email
-      list `only-me-Tester`, every closed test both groups `testers-community@googlegroups.com` and
-      `maks-forge-testers@googlegroups.com` — never a per-app group or list. **The first closed
-      release of a never-published app is made in the Console**; the workflow takes over after its approval ([`RELEASING.md`](RELEASING.md)).
+- [x] **Plan the closed test.** Recruiting testers is not a concern for this app (owner, 2026-11-12);
+      the testers and the Console-made first closed release are in [`RELEASING.md`](RELEASING.md).
 - [x] **Decide the `applicationId` deliberately.** `com.maksforge.archeryscorer`, fixed by the Play
       entry created 2026-11-12 (default listing language en-US, free).
 
