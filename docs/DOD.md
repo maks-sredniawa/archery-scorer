@@ -47,10 +47,11 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [x] **Replace the placeholder domain.** Items deleted 2026-11-11; the home screen is an empty
       **Score an end** screen.
 - [x] **Rewrite `scripts/edge-to-edge.py`'s SCENES** against your screens. Rewritten in the strip;
-      all 12 legs green on a dispatched run of `6b0ca73`, 2026-11-12.
+      all 10 legs green on a dispatched run of `6b0ca73`, 2026-11-12
+      ([run](https://github.com/maks-sredniawa/archery-scorer/actions/runs/43167927367)).
 - [x] **Make the artifact allowlists yours.** All four `aab-*.py` scripts passed on a local
-      `bundleRelease` of `6b0ca73`, 2026-11-12: billing's three permissions, no features, no
-      orientation locks, Polish complete.
+      `bundleRelease` of `6b0ca73`, 2026-11-12: three permissions (two from Play Billing, one from
+      AndroidX), no features, no orientation locks, Polish complete.
 - [x] **Choose the palette.** Range green, chosen 2026-11-11 (`phase-0.md` section 4).
 - [ ] **Make the support address work both ways.** `bootstrap.py` compiled in
       `<repo>.support@maksforge.com` (or `--support`) and wrote it into the site, the privacy policy
