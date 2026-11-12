@@ -112,6 +112,29 @@ class FakeEndTest(unittest.TestCase):
         self.assertFalse(report["rings_fit"])
         self.assertTrue(report["holes_fit"])
 
+    def test_a_holes_photo_whose_rings_miss_is_no_reading_even_when_no_view_has_rings(self):
+        self.gate()
+        clicks = json.loads((self.run_dir / "clicks.json").read_text())
+        views = [self.run_dir / view["image"] for view in clicks["views"]]
+        holes = self.run_dir / clicks["holes"]["image"]
+        originals = {path: path.read_bytes() for path in [*views, holes]}
+        for path in views:
+            cv2.imwrite(str(path), np.full((900, 1200, 3), 200, np.uint8))
+        image = cv2.imread(str(holes))
+        width, height = image.shape[1], image.shape[0]
+        stretch = np.float32([[1.2, 0, -0.1 * width], [0, 1, 0]])
+        cv2.imwrite(str(holes), cv2.warpAffine(image, stretch, (width, height), borderValue=(200, 170, 115)))
+        try:
+            result = subprocess.run([sys.executable, str(HERE / "gate.py"), str(self.run_dir)], capture_output=True)
+        finally:
+            for path, original in originals.items():
+                path.write_bytes(original)
+        self.assertEqual(result.returncode, 1)
+        report = json.loads((self.run_dir / "report.json").read_text())
+        self.assertIsNone(report["passed"])
+        self.assertFalse(report["holes_fit"])
+        self.assertEqual(report["reason"], "NO READING: retake the holes photo")
+
     def test_a_folder_without_clicks_says_so(self):
         with tempfile.TemporaryDirectory() as empty:
             result = subprocess.run([sys.executable, str(HERE / "gate.py"), empty], capture_output=True, text=True)
