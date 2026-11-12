@@ -95,7 +95,7 @@ and `scripts/play-whatsnew.py` renders exactly that from the blocks below:
 
 ```bash
 python3 scripts/play-whatsnew.py                 # newest version here, to stdout
-python3 scripts/play-whatsnew.py --version 0.1.0 # a named one
+python3 scripts/play-whatsnew.py --version 0.2.0 # a named one
 ```
 
 It reformats and never retypes, so this document stays the only copy. It exits non-zero if a note is
