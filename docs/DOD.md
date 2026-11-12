@@ -75,10 +75,10 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [ ] **`LICENSE` and `README.md`.** Bootstrap wrote a source-available notice and a *Contributing*
       that refuses pull requests, or with `--licence reserved` a notice that grants nothing and a
       placeholder. Keep both or replace both; they must agree.
-- [ ] **Create the upload keystore, outside the repo**, and put its four values in
-      `local.properties`. Back it up somewhere that is not this machine: losing it means never being
-      able to update the app on Play again. Fill in *The upload key* table in `RELEASING.md` the same
-      day — the fingerprint is what Play asks you to compare.
+- [ ] **Back up the upload keystore** somewhere that is not this machine: losing it means never
+      being able to update the app on Play again. Created 2026-11-12, its four values in
+      `local.properties` and *The upload key* table in `RELEASING.md` filled in; the backup is the
+      owner's, and its line in that table is still open.
 - [ ] **Set up the GitHub repository** — `python3 scripts/repo-setup.py` does the ruleset and the
       merge setting; the release-please PAT is the one step it cannot do, and without it no
       release PR is ever opened. *Setting up a new repository* in [`RELEASING.md`](RELEASING.md).

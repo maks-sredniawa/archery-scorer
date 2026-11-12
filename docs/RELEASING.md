@@ -291,11 +291,11 @@ it is asked for.
 
 | | |
 | --- | --- |
-| File | `~/.keystores/<app>-upload.jks` — **outside the repo**; `*.jks` is gitignored as a second line of defence |
+| File | `~/.keystores/archery-scorer-upload.jks`, created 2026-11-12 — **outside the repo**; `*.jks` is gitignored as a second line of defence |
 | Type / alias | PKCS12, alias `upload`. PKCS12 keeps **one** password, so `upload.storePassword` and `upload.keyPassword` are the same string |
-| Key | *(algorithm, size, valid until)* |
-| SHA-256 | *(fingerprint)* |
-| Backed up to | *(somewhere that is not this machine)* |
+| Key | RSA 4096, SHA384withRSA, `CN=Maksymilian Sredniawa`, valid until 2054-03-30 |
+| SHA-256 | `47:CC:75:3B:D1:DE:89:BF:94:9C:41:B5:4C:E2:EB:A5:CD:6C:B7:8B:AB:00:74:D8:43:DD:31:E3:77:95:F6:DD` |
+| Backed up to | *(not yet: the keystore and its password, off this machine)* |
 
 ```bash
 keytool -genkeypair -v -storetype PKCS12 -keystore ~/.keystores/<app>-upload.jks \
