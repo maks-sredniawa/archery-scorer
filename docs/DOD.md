@@ -75,7 +75,8 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [ ] **`LICENSE` and `README.md`.** Bootstrap wrote a source-available notice and a *Contributing*
       that refuses pull requests, or with `--licence reserved` a notice that grants nothing and a
       placeholder. Keep both or replace both; they must agree.
-- [x] **The upload keystore**, created and backed up 2026-11-12: *The upload key* in `RELEASING.md`.
+- [x] **The upload keystore**, created and backed up 2026-11-12, and its four `UPLOAD_*` secrets
+      set the same day: *The upload key* in `RELEASING.md`.
 - [ ] **Set up the GitHub repository** — `python3 scripts/repo-setup.py` does the ruleset and the
       merge setting; the release-please PAT is the one step it cannot do, and without it no
       release PR is ever opened. *Setting up a new repository* in [`RELEASING.md`](RELEASING.md).
@@ -90,8 +91,8 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       application. Recruit the testers before the build is ready, not after; `publish-play-closed.yml`
       moves each build to them. A tester-swap community, where developers test each other's closed
       tests, filled the apps built from this template within days. Testers: internal is the email
-      list `only-me-Tester`, every closed test the group `testers-community@googlegroups.com` —
-      never a per-app group or list. **The first closed release of a never-published app is made in
+      list `only-me-Tester`, every closed test both groups `testers-community@googlegroups.com` and
+      `maks-forge-testers@googlegroups.com` — never a per-app group or list. **The first closed release of a never-published app is made in
       the Console**; the workflow takes over after its approval ([`RELEASING.md`](RELEASING.md)).
 - [x] **Decide the `applicationId` deliberately.** `com.maksforge.archeryscorer`, fixed by the Play
       entry created 2026-11-12 (default listing language en-US, free).
