@@ -94,6 +94,24 @@ class FakeEndTest(unittest.TestCase):
         self.assertIsNone(report["passed"])
         self.assertFalse(report["holes_fit"])
 
+    def test_views_without_rings_fail_rather_than_give_no_reading(self):
+        self.gate()
+        clicks = json.loads((self.run_dir / "clicks.json").read_text())
+        paths = [self.run_dir / view["image"] for view in clicks["views"]]
+        originals = [path.read_bytes() for path in paths]
+        for path in paths:
+            cv2.imwrite(str(path), np.full((900, 1200, 3), 200, np.uint8))
+        try:
+            result = subprocess.run([sys.executable, str(HERE / "gate.py"), str(self.run_dir)], capture_output=True)
+        finally:
+            for path, original in zip(paths, originals):
+                path.write_bytes(original)
+        self.assertEqual(result.returncode, 1)
+        report = json.loads((self.run_dir / "report.json").read_text())
+        self.assertIs(report["passed"], False)
+        self.assertFalse(report["rings_fit"])
+        self.assertTrue(report["holes_fit"])
+
     def test_a_folder_without_clicks_says_so(self):
         with tempfile.TemporaryDirectory() as empty:
             result = subprocess.run([sys.executable, str(HERE / "gate.py"), empty], capture_output=True, text=True)
