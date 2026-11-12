@@ -46,12 +46,11 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       copy runs into the new mark.
 - [x] **Replace the placeholder domain.** Items deleted 2026-11-11; the home screen is an empty
       **Score an end** screen.
-- [ ] **Rewrite `scripts/edge-to-edge.py`'s SCENES** against your screens. Until then the nightly
-      walks screens that do not exist, and `screenshots.py` cannot shoot a listing.
-- [ ] **Make the artifact allowlists yours.** `aab-permissions.py`'s EXPECTED, FORBIDDEN and
-      EXPECTED_ORIENTATION describe the template. Run all four `aab-*.py` scripts against a local
-      `bundleRelease` **before the first tag** — the first app built from it found its stale table in the publish
-      workflow, after the tag, with the version already spent.
+- [x] **Rewrite `scripts/edge-to-edge.py`'s SCENES** against your screens. Rewritten in the strip;
+      all 12 legs green on a dispatched run of `6b0ca73`, 2026-11-12.
+- [x] **Make the artifact allowlists yours.** All four `aab-*.py` scripts passed on a local
+      `bundleRelease` of `6b0ca73`, 2026-11-12: billing's three permissions, no features, no
+      orientation locks, Polish complete.
 - [x] **Choose the palette.** Range green, chosen 2026-11-11 (`phase-0.md` section 4).
 - [ ] **Make the support address work both ways.** `bootstrap.py` compiled in
       `<repo>.support@maksforge.com` (or `--support`) and wrote it into the site, the privacy policy
