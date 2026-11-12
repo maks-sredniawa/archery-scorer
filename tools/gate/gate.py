@@ -98,9 +98,9 @@ def main() -> None:
     view_planes, holes_plane = planes[:-1], planes[-1]
     views_fit, holes_fit = all(fitted[:-1]), fitted[-1]
     if holes_plane is None or not any(view_planes):
-        reason = "NO READING: retake the holes photo" if holes_plane is None else "rings found in no view"
+        reason = "rings found in no view" if holes_fit else "NO READING: retake the holes photo"
         console.print(f"[red]{reason}; no entry point can be computed.[/red]")
-        passed = None if holes_plane is None else False
+        passed = False if holes_fit else None
         report_path.write_text(json.dumps({"passed": passed, "rings_fit": views_fit, "holes_fit": holes_fit,
                                            "reason": reason}, indent=2))
         raise SystemExit(1)
