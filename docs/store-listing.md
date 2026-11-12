@@ -111,7 +111,10 @@ note; the feature it made possible is. A release where nothing user-visible chan
 heading — rename it and say so in one line, so the decision is deliberate rather than made by
 default.
 
-### 0.1.0 — the first build
+### 0.2.0 — the first build
+
+Moved from 0.1.0, which never reached Play: the first build anyone installs is still the first
+release, so the bodies stand.
 
 **English** — 18/500:
 
