@@ -35,7 +35,7 @@ Play counts characters, not words, and rejects at the limit rather than truncati
 in the heading and update it when you edit: it is the only warning you get before the Console
 refuses a paste.
 
-### App name — 0/30
+### App name — 14/30
 
 **The app name is not translated, in any locale.** `app_name` is `translatable="false"` for the same
 reason, so every listing carries the same name.
@@ -44,14 +44,15 @@ reason, so every listing carries the same name.
 Archery Scorer
 ```
 
-### Short description — 0/80
+### Short description — 76/80
 
 The line that appears under the name in search results, and the most-read text in the listing.
 
 ```
+Photograph your end with the arrows in, then check each arrow and the total.
 ```
 
-### Full description — 0/4000
+### Full description — 2596/4000
 
 **No health or safety claims**, here or on any page the listing links to — Play's enforcement reads a
 linked page as part of the listing. Say what the app cannot do instead.
@@ -67,25 +68,84 @@ renders no markup. The block below is what `play-metadata.py` uploads, so the ou
 5. `PERMISSIONS` — one line each, in the user's words.
 6. A last line pointing at the source: `github.com/maks-sredniawa/archery-scorer`.
 
+The second paragraph says what the current test build can do. Each test build rewrites it, and the
+release that ships scoring from a photo (Phase 1) deletes it, in both languages.
+
 ```
+Archery Scorer counts the score of an end from photos of the target, taken with the arrows still in, so nobody has to tally the arrows by hand. Every arrow it finds is shown on a drawing of the face, where you check it, move it, add one or remove one before the end counts.
+
+This test build shows the Score an end screen, but scoring from a photo is not ready yet: the button stays off and the screen says so. Settings, the language switch (English and Polish) and the Help and feedback screen already work. Scoring arrives in the next test builds.
+
+HOW IT WORKS
+Shoot your end and leave the arrows in. Open the app and take a photo of the target with your phone's own camera app.
+The app finds the face and each arrow on the phone, and draws them on a picture of the face with each arrow's value, the end's total and the X count beside it.
+If it is unsure about an arrow, it asks for one more photo from a different angle, and only then.
+An arrow within about 2 mm of a line is flagged, so you look at the close ones yourself. A line cutter takes the higher value, as the rules say.
+Drag an arrow that sits wrong, add one it missed or remove one it invented. Robin Hoods, bounce-outs and pass-throughs are entered by hand.
+
+WHICH TARGETS
+The single-spot ten-ring World Archery face in 122, 80, 60 and 40 cm, including the compound inner ten on the 60 and 40 cm faces. The 80 cm six-ring face and the vertical triple spot are planned. Field, 3D and other faces are not.
+
+FREE, AND NOTHING LEAVES YOUR PHONE
+No ads. No account. No server. No subscription. Archery Scorer does not request the internet permission, so your photos cannot leave your phone: they are scored on the phone and never uploaded. A photo has its location and other metadata removed before the app stores it, and what the app stores stays in its own storage. An optional tip through Google Play unlocks nothing.
+
+WHAT IT CANNOT DO
+It reads the target from a photo, so a blurred, dark or steeply angled shot can give a wrong value or miss an arrow. That is why every arrow is shown for you to check: the score is yours to confirm, not the app's.
+It scores with the arrows in the target. It cannot score from holes after the arrows are pulled, because a face full of old holes cannot tell this end from the last one.
+It does not settle a dispute. At a tournament, the judge's call stands.
+
+PERMISSIONS
+None to grant. Photos are taken by your phone's own camera app and handed over one at a time, so the app never asks for the camera or your gallery.
+
+Source available, built in the open: github.com/maks-sredniawa/archery-scorer
 ```
 
 ## Polish
 
-### App name — 0/30
+Informal `ty`, as in the app, and no gendered past tense for the archer (translator brief §6.2).
+An end is a *seria*, the face a *tarcza*, a line cutter a *strzała na linii*.
+
+### App name — 14/30
 
 ```
 Archery Scorer
 ```
 
-### Short description — 0/80
+### Short description — 74/80
 
 ```
+Sfotografuj serię ze strzałami w tarczy i sprawdź każdą strzałę oraz sumę.
 ```
 
-### Full description — 0/4000
+### Full description — 2623/4000
 
 ```
+Archery Scorer liczy wynik serii ze zdjęć tarczy zrobionych ze strzałami wciąż w macie, więc nikt nie musi sumować strzał ręcznie. Każda znaleziona strzała pojawia się na rysunku tarczy, gdzie ją sprawdzasz, przesuwasz, dodajesz brakującą albo usuwasz zbędną, zanim seria zostanie policzona.
+
+Ta wersja testowa pokazuje ekran Policz serię, ale liczenie ze zdjęcia nie jest jeszcze gotowe: przycisk jest nieaktywny, a ekran o tym mówi. Ustawienia, przełącznik języka (angielski i polski) i ekran Pomoc i opinie już działają. Liczenie pojawi się w kolejnych wersjach testowych.
+
+JAK TO DZIAŁA
+Wystrzelaj serię i zostaw strzały w macie. Otwórz aplikację i zrób zdjęcie tarczy aparatem w telefonie.
+Aplikacja znajduje w telefonie tarczę i każdą strzałę, a potem rysuje je na obrazku tarczy z wartością każdej strzały, sumą serii i liczbą X obok.
+Gdy nie jest pewna jakiejś strzały, prosi o jeszcze jedno zdjęcie z innej strony, i tylko wtedy.
+Strzała bliżej niż około 2 mm od linii jest oznaczona, więc te bliskie sprawdzasz osobiście. Strzała na linii dostaje wyższą wartość, zgodnie z przepisami.
+Przeciągnij strzałę, która leży w złym miejscu, dodaj pominiętą albo usuń zmyśloną. Robin Hoody, odbicia i przestrzały wpisujesz ręcznie.
+
+JAKIE TARCZE
+Jednopolowa dziesięciopierścieniowa tarcza World Archery 122, 80, 60 i 40 cm, z wewnętrzną dziesiątką dla łuku bloczkowego na tarczach 60 i 40 cm. Tarcza 80 cm z sześcioma pierścieniami i pionowa tarcza potrójna są w planach. Tarcze terenowe, 3D i inne nie są.
+
+ZA DARMO I NIC NIE OPUSZCZA TELEFONU
+Bez reklam, bez konta, bez serwera, bez subskrypcji. Archery Scorer nie prosi o uprawnienie do internetu, więc zdjęcia nie mogą opuścić telefonu: są liczone w telefonie i nigdy nie są wysyłane. Zanim aplikacja zapisze zdjęcie, usuwa z niego lokalizację i inne metadane, a wszystko, co zapisuje, zostaje w jej własnej pamięci. Opcjonalny napiwek przez Google Play niczego nie odblokowuje.
+
+CZEGO NIE POTRAFI
+Odczytuje tarczę ze zdjęcia, więc nieostre, ciemne albo zrobione pod dużym kątem zdjęcie może dać złą wartość albo pominąć strzałę. Dlatego każda strzała jest pokazana do sprawdzenia: wynik zatwierdzasz ty, nie aplikacja.
+Liczy ze strzałami w tarczy. Nie policzy z przestrzelin po wyciągnięciu strzał, bo na tarczy pełnej starych dziur nie da się odróżnić tej serii od poprzedniej.
+Nie rozstrzyga sporów. Na zawodach decyduje sędzia.
+
+UPRAWNIENIA
+Żadnych do nadania. Zdjęcia robi aparat w telefonie i przekazuje je po jednym, więc aplikacja nigdy nie prosi o dostęp do aparatu ani galerii.
+
+Kod źródłowy jest publicznie dostępny: github.com/maks-sredniawa/archery-scorer
 ```
 
 ## Release notes (Play's "What's new", 500 chars per locale)

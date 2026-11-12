@@ -5,24 +5,15 @@ title: Privacy Policy
 
 # Privacy Policy
 
-_Last updated: <date>_
+_Last updated: 12 November 2026_
 
-<!--
-    **This is a template with real structure, not boilerplate to paste unread.** Play requires a
-    *hosted* privacy policy URL and an offline app has no server of its own, which is why this repo
-    carries a `docs/_config.yml` — maksforge.com serves this file for nothing.
-
-    The part people get wrong is the last section. An app that stores everything locally still has
-    things happening around it that a policy has to be honest about, and Play's Data safety form
-    asks about them separately. Go through each and delete what does not apply.
--->
-
-<App name> is an Android app for <one line>. This policy describes what the app does with the
-information you put into it. It is short because the app does very little.
+Archery Scorer is an Android app that counts the score of an archery end from photos of the target.
+This policy describes what the app does with the information you put into it. It is short because
+the app does very little.
 
 ## The app collects nothing
 
-<App name> has no account, no sign-in, and no server. Nothing you enter is transmitted anywhere.
+Archery Scorer has no account, no sign-in, and no server. Nothing you enter is transmitted anywhere.
 
 Everything you record is stored **only in the app's private storage on your own device**, and is
 readable only by the app.
@@ -43,7 +34,7 @@ The Google Play Billing library, which handles tips, carries usage logging of it
 
 ## The two things that happen outside the app
 
-These are done by the operating system or by Google, not by <app name>, but they are the honest
+These are done by the operating system or by Google, not by Archery Scorer, but they are the honest
 answer to "where could my data be":
 
 1. **Android's automatic backup.** If it is enabled on your phone, Android backs up the app's data
