@@ -5,7 +5,6 @@ fact that would change it**. The Console shows what was answered but never why, 
 when the app changes, when the questionnaire changes, and once a year. A re-declaration made from
 memory a year from now is how a true answer turns false.
 
-
 Two rules keep this file honest:
 
 - **The privacy policy and the Data safety form describe the same facts to two audiences**, and Play
@@ -174,8 +173,8 @@ captures no audio, so say so in the declaration if the service's job is a sound.
   `https://maksforge.com/archery-scorer/`. Public on the listing and the same address
   `SupportHandoff.kt` compiles in. The Console field changes without a release; the app's copy needs
   one.
-- **Privacy policy:** `https://maksforge.com/archery-scorer/privacy-policy`, served from `docs/` by
-  maksforge.com. It updates within about 15 minutes of a merge to `main`, with no release, which is why it has to be right before the
+- **Privacy policy:** `https://maksforge.com/archery-scorer/privacy-policy`, set 2026-11-12, served
+  from `docs/` by maksforge.com. It updates within about 15 minutes of a merge to `main`, with no release, which is why it has to be right before the
   app it describes ships rather than after.
 
 ## Production access — the application, and the answers it was given
@@ -227,6 +226,11 @@ them:**
 **Default: no payment link on any surface the release controls**, whatever the app sells through Play
 Billing. Not in the app, and not on the pages the listing links to. Read this before adding one,
 because the policy text and its enforcement disagree.
+
+⚠ The listing's *Website*, `maksforge.com/archery-scorer/`, and the privacy policy are drawn by
+`maks-sredniawa/pages-theme`, whose layout carries a *Like what I make?* block with Buy me a coffee and
+PayPal links on every page. Accepted: the live siblings, Gloam and Binky, passed review with the same
+theme. If a reviewer cites it, the fix goes in the theme, as a per-site opt-out, not in this app.
 
 - **The text allows it.** Payments policy §3.2 treats a tip as a peer-to-peer payment, outside Play
   Billing, when **100% reaches the creator** and **nothing unlocks** — no badge, no theme, no
