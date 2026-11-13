@@ -83,9 +83,9 @@ ADR-0007. The code is in; these are the parts only Play and a phone can prove. T
 *Selling the tip* in [`RELEASING.md`](RELEASING.md).
 
 - [x] **Keep it or delete it, before the first upload.** Kept (owner, 2026-11-11).
-- [ ] **A build with billing on internal testing**, then the four products created and active.
-      The build is there: 0.2.0, uploaded by `publish-play.yml` on 2026-11-12. `tip_small` is active
-      (2026-11-12, Poland's price still to check against 5.00); the other three are still owed.
+- [x] **A build with billing on internal testing, then the four products created and active.** 0.2.0 on
+      internal 2026-11-12; `tip_small`, `tip_medium`, `tip_large`, `tip_xlarge` active 2026-11-13, purchase
+      option `tip`, multi-quantity on, Poland at exactly 5.00 / 10.00 / 20.00 / 50.00 PLN.
 - [ ] **One purchase from a licence tester** on the internal install, ending in the thank-you line,
       and the *same* tip bought again — the second purchase is the proof that the first was consumed.
 - [ ] **The debug build shows no tip section and no card.** Play has never heard of the `.debug`
