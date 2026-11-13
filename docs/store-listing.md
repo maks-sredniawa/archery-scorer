@@ -187,3 +187,25 @@ The first release.
 ```
 Pierwsze wydanie.
 ```
+
+### 0.3.0
+
+**English** — 425/500:
+
+```
+Help and feedback is clearer and has more in it:
+• The support email address, ready to copy
+• Report a problem says exactly what it fills in, and that nothing you record in the app is included
+• A new About section: the app's web page, the privacy policy, more MaksForge apps and the version number to copy
+• Credits, opening with who made the app, then the open-source licences with their full names and links to their terms
+```
+
+**Polish** — 457/500:
+
+```
+Pomoc i opinie są czytelniejsze i zawierają więcej:
+• Adres e-mail pomocy, gotowy do skopiowania
+• Zgłoś problem mówi dokładnie, co wpisuje, i że nie dołącza niczego, co zapisujesz w aplikacji
+• Nowa sekcja O aplikacji: strona aplikacji, polityka prywatności, więcej aplikacji MaksForge i numer wersji do skopiowania
+• Podziękowania, które zaczynają się od tego, kto zrobił aplikację, a potem licencje open source z pełnymi nazwami i linkami do ich warunków
+```
