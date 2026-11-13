@@ -510,10 +510,11 @@ something:
 3. **Prices: set Poland by hand.** Bulk pricing treats the amount you type as excluding VAT, so 5 PLN
    comes out as 6.19 in Poland. Set the base price, let Play convert the rest, then override Poland to
    exactly 5.00 / 10.00 / 20.00 / 50.00.
-4. **One real purchase on the phone, as a licence tester**, from the internal-testing install: the
-   Support section shows Play's prices, Play's sheet opens, and *Thank you. It means a lot.* appears.
-   That line is only shown after a successful consume, so it is the proof the consume works. Play
-   refuses adb-injected taps on its own Buy and Update buttons — a person taps those.
+4. **Play's purchase sheet opens on the phone, as a licence tester**, from the internal-testing
+   install: the Support section shows Play's prices, and a tip opens Play's sheet with the test card.
+   Stop there; no test purchase is needed. The consume, and with it *Thank you. It means a lot.*, is
+   first exercised by step 6's real tip after production. Play refuses adb-injected taps on its own
+   Buy and Update buttons — a person taps those.
 5. **Re-submit the content rating** with *digital purchases* Yes, before the build reaches production
    (`play-app-content.md` — expect Brazil at 14+).
 6. After production: one real tip from an account that is **not** a licence tester, seen in *Order

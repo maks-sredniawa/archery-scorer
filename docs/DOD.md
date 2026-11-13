@@ -77,7 +77,7 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [x] **Decide the `applicationId` deliberately.** `com.maksforge.archeryscorer`, fixed by the Play
       entry created 2026-11-12 (default listing language en-US, free).
 
-## The tip — open until a real purchase is consumed
+## The tip — open until Play and a phone have proved it
 
 ADR-0007. The code is in; these are the parts only Play and a phone can prove. The steps are
 *Selling the tip* in [`RELEASING.md`](RELEASING.md).
@@ -88,8 +88,8 @@ ADR-0007. The code is in; these are the parts only Play and a phone can prove. T
       option `tip`, multi-quantity on, Poland at exactly 5.00 / 10.00 / 20.00 / 50.00 PLN.
 - [x] **The tip reaches Play's purchase sheet.** On the `play-api36` emulator, 2026-11-13, installed from
       the internal track as a licence tester: all four prices loaded, and the small tip opened Play's
-      sheet with the quantity picker and the test card. No purchase was made: the owner ruled the
-      buy-and-buy-again check unnecessary.
+      sheet with the quantity picker and the test card. No purchase was made: the buy-and-buy-again
+      check is unnecessary (owner, 2026-11-13).
 - [ ] **The debug build shows no tip section and no card.** Play has never heard of the `.debug`
       package, so absent is the correct reading, not a failure.
 - [x] **Content rating with *digital purchases* Yes.** Submitted that way 2026-11-12; Brazil 14+.
