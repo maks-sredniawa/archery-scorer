@@ -149,24 +149,33 @@ not the method: a rendered face has perfect colours, a flat sheet and straight s
 
 ### A first look at real photos, from the web (2026-11-13)
 
-17 openly licensed photos of single-spot faces with arrows in (mostly Wikimedia Commons; sources and
-licences in `tools/gate/runs/web/sources.csv`, which stays out of git). Single views, mostly from
-the shooting line, face size known on only three. A preview of the failure modes, not the gate.
+17 openly licensed photos of single-spot faces with arrows in, all from Wikimedia Commons (sources
+and licences in `tools/gate/runs/web/sources.csv`, which stays out of git). Single views, mostly
+from the shooting line. The face size is known on only three: paper-target (60 cm, printed on the
+face), wa122-group and wa80-boss. Every other millimetre figure below rests on an assumed face size
+and says so. A preview of the failure modes, not the gate.
 
-- **Rings.** Over the whole photo, red and blue fit within `RING_FIT_MAX_RMS_MM` in 2 of 17, one of
-  them only with a searched focal length. Where the face is flat, near straight-on and alone in frame,
-  the ellipses land on the true edges every time but miss the line by 1.4–3.5 mm. The failures were
-  other red or blue things in frame (shirts, straps, neighbouring faces), angles past about 70°,
-  curled faces, crops, and pale colour below the Lab thresholds.
-- **Scoring.** 60 entry points placed by eye on 13 photos and scored through the fitted rings; the
-  owner reviewed them and corrected 2 scores, both one zone high on a line, so 58 of 60. In
-  sac-oblique, seen at about 75°, a refit puts arrows 4 and 5 two zones higher than the reviewed
-  score: unresolved.
+- **Rings.** Red and blue fit within `RING_FIT_MAX_RMS_MM` in 2 of 17: paper-target (0.56 / 0.68 mm,
+  focal length searched), and govier-looks only with a searched focal length and an assumed 40 cm
+  face (0.52 / 0.84 mm; at 60 cm it would fail, 0.78 / 1.26 mm). On three other flat, near
+  straight-on faces (army-team, best-round, radeberg) the ellipses land on the true edges but miss
+  the line by 1.4–3.5 mm at their assumed sizes. The failures were other red or blue things in frame
+  (shirts, straps, neighbouring faces), angles past about 70°, curled faces, crops, and pale colour
+  below the Lab thresholds.
+- **Scoring.** 60 entry points placed by eye on 13 photos; 56 were scored through a ring fit, and
+  usmc-row's 4 are eye guesses (no blue region found). The owner reviewed all 60 and corrected 2,
+  both one zone high: 54 of the 56 ring-scored entries agreed. In sac-oblique, seen at about 75°, a
+  refit changes four of its five scores (arrows 2 and 3 by one zone, arrow 4 from 5 to 7, arrow 5
+  from 3 to 9): unresolved.
 - **Shafts, OpenCV only.** A line-segment finder (one parameter set, tuned and scored on these same
   13 photos, so optimistic) matched 30 of the 60 entries within half a ring width, missed 30 and
-  added 30 false ones; 5 of the 30 matches are within 1.5 mm. Tight groups, the wrong shaft end on
-  near-straight views, printed lines and shadows are what failed. This leans to verdict 2, pending
-  the gate's own three-view photos.
+  added 30 false ones. In millimetres only where the face size is known: 11 matches, on paper-target
+  and wa122-group (none on wa80-boss), median 5.6 mm, 1 of them within 1.5 mm. Tight groups, the
+  wrong shaft end on near-straight views, printed lines and shadows are what failed.
+
+Shafts were found too rarely for verdict 1, and the rings fit too rarely on these photos for verdict
+2's premise, which is verdict 3's territory. But web photos are not the gate's protocol (handheld,
+±35°, one face filling the frame), so the verdict still waits for the owner's three-view photos.
 
 ### The verdict, taken *(date)*
 
