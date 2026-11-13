@@ -86,8 +86,10 @@ ADR-0007. The code is in; these are the parts only Play and a phone can prove. T
 - [x] **A build with billing on internal testing, then the four products created and active.** 0.2.0 on
       internal 2026-11-12; `tip_small`, `tip_medium`, `tip_large`, `tip_xlarge` active 2026-11-13, purchase
       option `tip`, multi-quantity on, Poland at exactly 5.00 / 10.00 / 20.00 / 50.00 PLN.
-- [ ] **One purchase from a licence tester** on the internal install, ending in the thank-you line,
-      and the *same* tip bought again — the second purchase is the proof that the first was consumed.
+- [x] **The tip reaches Play's purchase sheet.** On the `play-api36` emulator, 2026-11-13, installed from
+      the internal track as a licence tester: all four prices loaded, and the small tip opened Play's
+      sheet with the quantity picker and the test card. No purchase was made: the owner ruled the
+      buy-and-buy-again check unnecessary.
 - [ ] **The debug build shows no tip section and no card.** Play has never heard of the `.debug`
       package, so absent is the correct reading, not a failure.
 - [x] **Content rating with *digital purchases* Yes.** Submitted that way 2026-11-12; Brazil 14+.
