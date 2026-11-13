@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/maks-sredniawa/archery-scorer/compare/v0.2.0...v0.3.0) (2026-11-13)
+
+
+### Features
+
+* **support:** adopt the shared Help and feedback from android-starter ([c29c1e9](https://github.com/maks-sredniawa/archery-scorer/commit/c29c1e98259e4f8df2e73439075d6bb2deaae7ee))
+* **support:** link licence terms and show licence names on Credits ([11082ba](https://github.com/maks-sredniawa/archery-scorer/commit/11082baeed94973d6d7822cfc9222022408852ea))
+* **support:** open Credits with the people who made the app ([5814127](https://github.com/maks-sredniawa/archery-scorer/commit/58141277b2fd4e4426039b5e1bac8be7c6ea781a))
+* **support:** sync the support address row and clearer report hint from android-starter ([4ffc826](https://github.com/maks-sredniawa/archery-scorer/commit/4ffc826f32b3ea730c5cc939abf050aed004474b))
+
+
+### Bug Fixes
+
+* **support:** say when the language report finds no mail app, and keep the licence screen safe ([e2283f6](https://github.com/maks-sredniawa/archery-scorer/commit/e2283f6bfe0f0de6501d2e8bdc15a17d75df0025))
+
 ## [0.2.0](https://github.com/maks-sredniawa/archery-scorer/compare/v0.1.0...v0.2.0) (2026-11-12)
 
 
