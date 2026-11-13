@@ -59,24 +59,16 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [x] **Write the listing.** `docs/store-listing.md`, English and Polish, category *Sports*, 2026-11-12.
 - [ ] **Capture the screenshots** with `scripts/screenshots.py` from a release-shaped build, in every
       listing language, into `art/play-screenshots/`. Play wants at least two before the first review.
-- [ ] **Put the app on maksforge.com.** Its icon goes at `assets/icons/<repo>.webp` in
-      maks-sredniawa/maks-sredniawa.github.io, which the app's own site loads, and the app goes on that home
-      page. Replace `description` in `docs/_config.yml` too: it is the tagline under the app's name.
-- [ ] **Write the privacy policy** and confirm `maksforge.com/<repo>/privacy-policy`
-      serves it. Written 2026-11-12; serving it is checked after the merge. Play requires a *hosted* URL, and an offline app has no server of its own.
-- [ ] **Answer the Console's App content pages and write [`play-app-content.md`](play-app-content.md)
-      in the same sitting** — the reasons are in front of you then and gone a week later. It moves in
-      the same commit as the privacy policy, every time. Re-read *Target audience* after the content
-      rating is submitted.
+- [x] **Put the app on maksforge.com.** In development on the home page and the profile README,
+      icon included, 2026-11-12.
+- [x] **Write the privacy policy.** Live at `maksforge.com/archery-scorer/privacy-policy`, 2026-11-12.
+- [x] **Answer the Console's App content pages and write [`play-app-content.md`](play-app-content.md).**
+      All ten declarations answered 2026-11-12, each dated in that file.
 - [x] **`LICENSE` and `README.md`.** Source-available kept (owner, 2026-11-12).
 - [x] **The upload keystore**, created and backed up 2026-11-12, and its four `UPLOAD_*` secrets
       set the same day: *The upload key* in `RELEASING.md`.
-- [ ] **Set up the GitHub repository** — `python3 scripts/repo-setup.py` does the ruleset and the
-      merge setting; the release-please PAT is the one step it cannot do, and without it no
-      release PR is ever opened. *Setting up a new repository* in [`RELEASING.md`](RELEASING.md).
-      **None of this is inherited from the template** — GitHub copies files, never settings — and
-      the build stays green while it is all still undone. **Write the PAT's expiry date into this
-      item** the day you create it: when it lapses the release PR simply stops appearing.
+- [x] **Set up the GitHub repository.** Ruleset and rebase-only merges in place; the release-please
+      PAT was set 2026-11-12 and expires around 2027-11-12.
 - [x] **Create the service account and set `PLAY_SERVICE_ACCOUNT_JSON`**, 2026-11-12:
       `archery-scorer-play-ci` in its own Cloud project `archery-scorer-play`, invited with no
       account permissions, the two app permissions on this app only, and no expiry date.
@@ -92,12 +84,13 @@ ADR-0007. The code is in; these are the parts only Play and a phone can prove. T
 
 - [x] **Keep it or delete it, before the first upload.** Kept (owner, 2026-11-11).
 - [ ] **A build with billing on internal testing**, then the four products created and active.
-      The build is there: 0.2.0, uploaded by `publish-play.yml` on 2026-11-12.
+      The build is there: 0.2.0, uploaded by `publish-play.yml` on 2026-11-12. `tip_small` is active
+      (2026-11-12, Poland's price still to check against 5.00); the other three are still owed.
 - [ ] **One purchase from a licence tester** on the internal install, ending in the thank-you line,
       and the *same* tip bought again — the second purchase is the proof that the first was consumed.
 - [ ] **The debug build shows no tip section and no card.** Play has never heard of the `.debug`
       package, so absent is the correct reading, not a failure.
-- [ ] **Content rating re-submitted** with *digital purchases* Yes, before production.
+- [x] **Content rating with *digital purchases* Yes.** Submitted that way 2026-11-12; Brazil 14+.
 
 ## Before the next upload
 
