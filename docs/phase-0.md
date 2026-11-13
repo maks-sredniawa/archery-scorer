@@ -147,6 +147,27 @@ The worst two-view arrows are those whose shaft planes meet the face at a narrow
 hidden, so the run's R3 is zero in every view. This proves the arithmetic,
 not the method: a rendered face has perfect colours, a flat sheet and straight shafts.
 
+### A first look at real photos, from the web (2026-11-13)
+
+17 openly licensed photos of single-spot faces with arrows in (mostly Wikimedia Commons; sources and
+licences in `tools/gate/runs/web/sources.csv`, which stays out of git). Single views, mostly from
+the shooting line, face size known on only three. A preview of the failure modes, not the gate.
+
+- **Rings.** Over the whole photo, red and blue fit within `RING_FIT_MAX_RMS_MM` in 2 of 17, one of
+  them only with a searched focal length. Where the face is flat, near straight-on and alone in frame,
+  the ellipses land on the true edges every time but miss the line by 1.4–3.5 mm. The failures were
+  other red or blue things in frame (shirts, straps, neighbouring faces), angles past about 70°,
+  curled faces, crops, and pale colour below the Lab thresholds.
+- **Scoring.** 60 entry points placed by eye on 13 photos and scored through the fitted rings; the
+  owner reviewed them and corrected 2 scores, both one zone high on a line, so 58 of 60. In
+  sac-oblique, seen at about 75°, a refit puts arrows 4 and 5 two zones higher than the reviewed
+  score: unresolved.
+- **Shafts, OpenCV only.** A line-segment finder (one parameter set, tuned and scored on these same
+  13 photos, so optimistic) matched 30 of the 60 entries within half a ring width, missed 30 and
+  added 30 false ones; 5 of the 30 matches are within 1.5 mm. Tight groups, the wrong shaft end on
+  near-straight views, printed lines and shadows are what failed. This leans to verdict 2, pending
+  the gate's own three-view photos.
+
 ### The verdict, taken *(date)*
 
 *(Not yet: it needs the photos.)*
