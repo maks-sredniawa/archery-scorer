@@ -1,16 +1,22 @@
-"""The mark: a tight group of three arrow holes inside a ring, the single definition of this app's identity.
+"""The mark: a fletched arrow stuck in the middle of a target face, the single definition of this app's identity.
 
 See `art/README.md` for why it is the single source and where it came from.
 
-Coordinates are in arbitrary units around an origin at the mark's centre; callers fit them to their
-own canvas with `fit()`. y grows downward, as it does in both SVG and PIL.
+Coordinates are in dp of a launcher icon's visible 72dp square, around an origin at its centre;
+callers place that square on their own canvas with `fit()`. y grows downward, as it does in both SVG
+and PIL. The face is drawn well past the square: it bleeds off every edge it touches, so it never
+closes into a disc, and whatever shows it crops it.
 """
 
+import math
 import re
 from dataclasses import dataclass
 
 GROUND = (0x10, 0x51, 0x32)
+FACE = (0x3F, 0x86, 0x60)
 MARK_INK = (0xF7, 0xFA, 0xF6)
+
+FRAME = 72
 
 
 @dataclass(frozen=True)
@@ -28,6 +34,20 @@ class Subpath:
     hole: bool = False
 
 
+@dataclass(frozen=True)
+class Layer:
+    """Subpaths filled in one colour, minus `cut`.
+
+    `cut` is one contour removed from this layer only, for a gap between it and a layer above. It is
+    a separate field rather than another hole because a hole only subtracts once under non-zero
+    winding: laid across this face's own ring gaps, it would fill them instead of leaving them open.
+    """
+
+    ink: tuple
+    parts: tuple
+    cut: Subpath | None = None
+
+
 def circle(cx, cy, r):
     k = 0.5523 * r
     return (
@@ -40,15 +60,122 @@ def circle(cx, cy, r):
     )
 
 
-# Painted in this order: PIL rasterisers draw each part over the last, and the VectorDrawable's
-# non-zero fill gives the same result from the windings.
-PARTS = (
-    Subpath(circle(0, 0, 25)),
-    Subpath(circle(0, 0, 19.5), hole=True),
-    Subpath(circle(0, 0, 16)),
-    Subpath(circle(-4.5, -5.5, 3.7), hole=True),
-    Subpath(circle(5, -3.5, 3.7), hole=True),
-    Subpath(circle(0, 4.5, 3.7), hole=True),
+def _g(p):
+    return f"{round(p[0], 3):g},{round(p[1], 3):g}"
+
+
+def _line(a, b):
+    return [((2 * a[0] + b[0]) / 3, (2 * a[1] + b[1]) / 3), ((a[0] + 2 * b[0]) / 3, (a[1] + 2 * b[1]) / 3), b]
+
+
+def _arc(c, r, a0, a1):
+    """Cubics along a circle from angle a0 to a1, at most a quarter turn each."""
+    n = max(1, math.ceil(abs(a1 - a0) / (math.pi / 2)))
+    step = (a1 - a0) / n
+    k = 4 / 3 * math.tan(step / 4) * r
+    out = []
+    for i in range(n):
+        s, e = a0 + i * step, a0 + (i + 1) * step
+        out += [
+            (c[0] + r * math.cos(s) - k * math.sin(s), c[1] + r * math.sin(s) + k * math.cos(s)),
+            (c[0] + r * math.cos(e) + k * math.sin(e), c[1] + r * math.sin(e) - k * math.cos(e)),
+            (c[0] + r * math.cos(e), c[1] + r * math.sin(e)),
+        ]
+    return out
+
+
+def _cubics(start, ctrl):
+    return f"M{_g(start)}" + "".join("C" + " ".join(_g(p) for p in ctrl[i:i + 3]) for i in range(0, len(ctrl), 3)) + "Z"
+
+
+def polygon(pts, grow=0.0):
+    """A clockwise polygon as cubic path data, optionally grown outward with round corners.
+
+    Growing intersects neighbouring offset edges at a concave corner and rounds a convex one, which
+    is right as long as no edge is shorter than the growth eats from it — true of the arrow here.
+    """
+    n = len(pts)
+    if not grow:
+        ctrl = []
+        for i in range(n):
+            ctrl += _line(pts[i], pts[(i + 1) % n])
+        return _cubics(pts[0], ctrl)
+
+    def outward(a, b):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        length = math.hypot(dx, dy)
+        return dy / length, -dx / length
+
+    joins = []
+    for i in range(n):
+        prev, p, nxt = pts[i - 1], pts[i], pts[(i + 1) % n]
+        n0, n1 = outward(prev, p), outward(p, nxt)
+        turn = (p[0] - prev[0]) * (nxt[1] - p[1]) - (p[1] - prev[1]) * (nxt[0] - p[0])
+        if turn > 0:
+            a0, a1 = math.atan2(n0[1], n0[0]), math.atan2(n1[1], n1[0])
+            while a1 < a0:
+                a1 += 2 * math.pi
+            joins.append(("arc", p, a0, a1))
+        else:
+            bx, by = n0[0] + n1[0], n0[1] + n1[1]
+            k = grow / (1 + n0[0] * n1[0] + n0[1] * n1[1])
+            joins.append(("pt", (p[0] + bx * k, p[1] + by * k)))
+
+    def ends(j):
+        if j[0] == "pt":
+            return j[1], j[1]
+        _, c, a0, a1 = j
+        return (c[0] + grow * math.cos(a0), c[1] + grow * math.sin(a0)), (c[0] + grow * math.cos(a1), c[1] + grow * math.sin(a1))
+
+    start = ends(joins[0])[1]
+    ctrl = []
+    for i in range(1, n + 1):
+        j = joins[i % n]
+        ctrl += _line(ctrl[-1] if ctrl else start, ends(j)[0])
+        if j[0] == "arc":
+            ctrl += _arc(j[1], grow, j[2], j[3])
+    return _cubics(start, ctrl)
+
+
+def _place(points, tail, tip):
+    """Arrow-local points (x along the shaft from the nock, y across it) -> mark coordinates."""
+    a = math.atan2(tip[1] - tail[1], tip[0] - tail[0])
+    c, s = math.cos(a), math.sin(a)
+    return [(tail[0] + x * c - y * s, tail[1] + x * s + y * c) for x, y in points]
+
+
+def _arrow(tail, tip, shaft=5.0, vane_at=1.0, vane_len=14.0, vane_high=6.5, sweep=6.0, lead=6.0):
+    """The arrow's silhouette as one clockwise outline: shaft and both vanes, nock at `tail`.
+
+    Each vane is a parallelogram swept back towards the nock (`sweep` and `lead` equal): at 48px a
+    vane is three or four pixels, and two clear parallel slants are what still read as feathers
+    there, where a long shallow leading edge blurred the pair into one blob.
+    """
+    length = math.dist(tail, tip)
+    h = shaft / 2
+    v0, v1 = vane_at + sweep, vane_at + sweep + vane_len
+    top = [(v0, -h), (v0 - sweep, -h - vane_high), (v1 - lead, -h - vane_high), (v1, -h)]
+    local = [(0, -h), *top, (length, -h), (length, h), *[(x, -y) for x, y in reversed(top)], (0, h)]
+    return _place(local, tail, tip)
+
+
+FACE_CENTRE = (-13, 13)
+TAIL, TIP = (24.5, -17), (-9.5, 10)
+KEYLINE = 2.6
+
+_ARROW = _arrow(TAIL, TIP)
+
+# The arrow alone: the bright shape, and all a flat-tinted layer (monochrome, notification) can carry —
+# tinted one colour with the rings, it would merge into them.
+ARROW = (Subpath(polygon(_ARROW)),)
+
+LAYERS = (
+    Layer(
+        FACE,
+        tuple(Subpath(circle(*FACE_CENTRE, r), hole=i % 2 == 1) for i, r in enumerate((52, 41, 30, 19, 8))),
+        cut=Subpath(polygon(_ARROW, grow=KEYLINE)),
+    ),
+    Layer(MARK_INK, ARROW),
 )
 
 _NUM = re.compile(r"-?\d*\.?\d+(?:e-?\d+)?")
@@ -100,8 +227,8 @@ def outline(e, tf=lambda p: p, steps=32):
     return pts
 
 
-def bounds(parts=PARTS):
-    """Bounding box of the silhouette. Holes are ignored — a hole cannot extend the mark."""
+def bounds(parts):
+    """Bounding box of a silhouette. Holes are ignored — a hole cannot extend the mark."""
     xs, ys = [], []
     for e in parts:
         if e.hole:
@@ -112,12 +239,15 @@ def bounds(parts=PARTS):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def fit(canvas, art_size, parts=PARTS):
-    """A transform placing the mark centred on a square canvas at a given longest-side size.
+def fit(canvas, frame_size):
+    """A transform putting the mark's FRAME square, centred, `frame_size` across on a square canvas."""
+    k = frame_size / FRAME
+    return lambda p: (canvas / 2 + p[0] * k, canvas / 2 + p[1] * k)
 
-    Returns a function mapping mark coordinates to canvas coordinates.
-    """
+
+def fit_bounds(canvas, art_size, parts):
+    """A transform centring `parts` alone on a square canvas at a given longest-side size."""
     x0, y0, x1, y1 = bounds(parts)
-    scale = art_size / max(x1 - x0, y1 - y0)
+    k = art_size / max(x1 - x0, y1 - y0)
     cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
-    return lambda p: (canvas / 2 + (p[0] - cx) * scale, canvas / 2 + (p[1] - cy) * scale)
+    return lambda p: (canvas / 2 + (p[0] - cx) * k, canvas / 2 + (p[1] - cy) * k)

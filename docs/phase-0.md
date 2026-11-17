@@ -243,9 +243,9 @@ graphite, violet). Not branded.
   with a reason to be here, and the furthest from the face's gold, red and blue; a warm neutral
   would lean to the gold and a blue-grey to the blue ring. All of `gen_scheme.py`'s contrast checks
   pass.
-- **Mark:** the Group, three arrow holes in a tight group inside a ring (`art/README.md`). Its
-  known weakness is that at a glance it can pass for a bowling ball; if that shows on a home screen,
-  move the holes further off-centre before changing the idea.
+- **Mark:** an arrow in the face, a fletched arrow stuck in a tone-on-tone target face that bleeds
+  off the icon's edge (`art/README.md`). It replaced the Group mark on 2026-11-17, which read as a
+  bowling ball.
 - **A rule for every phase that draws arrows on the face:** no brand colour reaches 3:1 against every
   zone. The primary (tone 40) is under 2:1 against the face's red; the light container tones reach
   about 3.4–3.9:1 against the red but sit near 1:1 on the gold. So an arrow marker on the face always
