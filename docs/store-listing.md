@@ -212,14 +212,14 @@ Pomoc i opinie są czytelniejsze i zawierają więcej:
 
 ### 0.4.0
 
-**English** — 98/500:
+**English** — 80/500:
 
 ```
-A new icon: an arrow in the target face. Themed icons and notifications show the arrow on its own.
+A new icon: an arrow in the target face. Themed icons show the arrow on its own.
 ```
 
-**Polish** — 81/500:
+**Polish** — 68/500:
 
 ```
-Nowa ikona: strzała w tarczy. Ikony motywu i powiadomienia pokazują samą strzałę.
+Nowa ikona: strzała w tarczy. Ikony z motywem pokazują samą strzałę.
 ```
