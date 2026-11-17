@@ -29,7 +29,7 @@ from rich.table import Table
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from face import Face, RingFit, fit_rings, near_line, score, single_view_entry, triangulated_entry  # noqa: E402
-from shafts import MATCH_RINGS, Shaft, face_to_image, find_shafts, match  # noqa: E402
+from shafts import MATCH_RINGS, Shaft, face_to_image, find_shafts, finds_its_shafts, found_in_most_views, match  # noqa: E402
 
 PASS_MEDIAN_MM = 1.5
 RING_FIT_MAX_RMS_MM = 1.0
@@ -79,32 +79,32 @@ def draw_shafts(path: Path, image: np.ndarray, plane, shafts: list[Shaft], match
 
 
 def shafts_reading(run: Path, clicks: dict, images: list, planes: list, holes: list, face: Face, shaft: float):
-    """R4: per view, the clicked arrows whose hole an automatic entry lands within half a ring width of.
-    Holes rather than near clicks, because a near click may sit up the shaft or on a hidden entry."""
+    """Holes rather than near clicks, because a near click may sit up the shaft or on a hidden entry."""
     table = Table(title=f"R4 · shafts found automatically (entry within {MATCH_RINGS} ring width of the hole)")
     for col in ("view", "clicked", "found", "missed", "false", "entry to hole"):
         table.add_column(col)
-    views, finding = [], 0
+    views, finds = [], []
     for view, image, plane in zip(clicks["views"], images, planes):
         clicked = [hole if arrow is not None else None for hole, arrow in zip(holes, view["arrows"])]
         count = sum(c is not None for c in clicked)
         if plane is None:
             table.add_row(view["image"], str(count), "-", "-", "-", "no ring fit")
-            views.append({"image": view["image"], "clicked": count, "found": 0, "false": None, "entry_to_hole_mm": []})
+            views.append({"image": view["image"], "clicked": count, "found": 0, "false": None, "entry_to_hole_mm": {}})
+            finds.append(False)
             continue
         with console.status(f"finding shafts in {view['image']} ..."):
             found = find_shafts(image, plane, face, shaft)
         matched = match([s.entry_mm for s in found], clicked, MATCH_RINGS * face.ring_mm)
         draw_shafts(run / f"{Path(view['image']).stem}-shafts.png", image, plane, found, matched)
         errors = [matched[i][1] for i in sorted(matched)]
-        finding += len(matched) * 2 > count
+        finds.append(finds_its_shafts(len(matched), count))
         table.add_row(view["image"], str(count), str(len(matched)), str(count - len(matched)),
                       str(len(found) - len(matched)), summary(errors))
         views.append({"image": view["image"], "clicked": count, "found": len(matched),
                       "false": len(found) - len(matched),
                       "entry_to_hole_mm": {str(i + 1): d for i, (_, d) in sorted(matched.items())}})
     console.print(table)
-    return {"views": views, "found_in_most_views": finding * 2 > len(views)}
+    return {"views": views, "found_in_most_views": found_in_most_views(finds)}
 
 
 def fits(fit: RingFit) -> bool:

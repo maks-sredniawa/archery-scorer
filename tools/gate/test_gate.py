@@ -18,7 +18,7 @@ sys.path.insert(0, str(HERE))
 
 import click  # noqa: E402
 from face import Face, near_line, score  # noqa: E402
-from shafts import match  # noqa: E402
+from shafts import finds_its_shafts, found_in_most_views, match  # noqa: E402
 
 
 class ScoreTest(unittest.TestCase):
@@ -71,8 +71,6 @@ class FakeEndTest(unittest.TestCase):
             self.assertLessEqual(view["false"], 2, view["image"])
             self.assertLess(max(view["entry_to_hole_mm"].values()), 5.0, view["image"])
             self.assertTrue((self.run_dir / view["image"].replace(".jpg", "-shafts.png")).is_file())
-        finding = sum(2 * v["found"] > v["clicked"] for v in report["views"])
-        self.assertEqual(report["found_in_most_views"], 2 * finding > len(report["views"]))
 
     def test_hidden_entries_are_counted_per_view_and_split_from_visible_ones(self):
         clicks_path = self.run_dir / "clicks.json"
@@ -164,6 +162,18 @@ class MatchTest(unittest.TestCase):
     def test_nothing_beyond_the_radius(self):
         self.assertEqual(match([np.array([0.0, 0.0])], [np.array([11.0, 0.0])], 10.0), {})
         self.assertEqual(match([], [np.array([1.0, 0.0])], 10.0), {})
+
+
+class MostViewsTest(unittest.TestCase):
+    def test_a_view_finds_its_shafts_only_with_more_than_half_found(self):
+        self.assertFalse(finds_its_shafts(3, 6))
+        self.assertTrue(finds_its_shafts(4, 6))
+        self.assertFalse(finds_its_shafts(0, 0))
+
+    def test_most_views_means_more_than_half(self):
+        self.assertFalse(found_in_most_views([True, False, False]))
+        self.assertTrue(found_in_most_views([True, True, False]))
+        self.assertFalse(found_in_most_views([]))
 
 
 class ClickTest(unittest.TestCase):

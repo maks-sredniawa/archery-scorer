@@ -176,8 +176,6 @@ def against_the_view(a_mm: np.ndarray, b_mm: np.ndarray, camera: np.ndarray) -> 
 
 
 def find_shafts(image_bgr: np.ndarray, plane: FacePlane, face: Face, shaft_mm: float) -> list[Shaft]:
-    """Off the face plane a shaft runs away from the camera's foot on it, so its entry is the end nearer that
-    foot; this holds for straight-on and oblique views alike."""
     extent = face.diameter_mm / 2 + MARGIN_RINGS * face.ring_mm
     grey, px_to_mm = rectify(image_bgr, plane, extent)
     segments = cv2.createLineSegmentDetector().detect(grey)[0]
@@ -215,3 +213,11 @@ def match(found: list[np.ndarray], clicked: list[np.ndarray | None], within_mm: 
         taken_f.add(fi)
         out[ci] = (fi, dist)
     return out
+
+
+def finds_its_shafts(found: int, clicked: int) -> bool:
+    return 2 * found > clicked
+
+
+def found_in_most_views(finds: list[bool]) -> bool:
+    return 2 * sum(finds) > len(finds)
