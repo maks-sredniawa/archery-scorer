@@ -21,6 +21,7 @@ was extracted from and the first app built from it settled on exactly this split
 - [ ] **Phase 1** — One end scored on the phone from photos of one target face, with every arrow correctable by hand
 - [ ] **Phase 2** — Safe to hand to a stranger ← **the door: closed testing opens here**
 - [ ] **Phase N** — Ship shape: listing, screenshots, the App content answers
+- [ ] **Phase 3** — Shafts found by our own trained model, on the phone (ADR-0008)
 
 ---
 
@@ -125,6 +126,14 @@ worse than none. The app asks for another photo, from another angle, only while 
 
 The mail hand-off live, every denial said on screen (rule 4), and the camera path proven on the
 emulators and one real phone. Closed testing opens after it.
+
+## Phase 3 — Shafts found by our own model
+
+Whatever Phase 0's verdict, a trained detector comes after the app is live: it catches what classical
+vision misses, or it replaces the taps. ADR-0008 fixes its shape: an entry-point heatmap on the face
+straightened from the rings, written in PyTorch, run on the phone through LiteRT or ONNX Runtime,
+trained on rendered ends first and then on ends the owner photographs and labels with `click.py`.
+Before it, a small classifier over the classical candidates may ship to cut false detections.
 
 ## Not in this plan
 
