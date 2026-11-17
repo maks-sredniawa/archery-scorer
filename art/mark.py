@@ -38,9 +38,8 @@ class Subpath:
 class Layer:
     """Subpaths filled in one colour, minus `cut`.
 
-    `cut` is one contour removed from this layer only, for a gap between it and a layer above. It is
-    a separate field rather than another hole because a hole only subtracts once under non-zero
-    winding: laid across this face's own ring gaps, it would fill them instead of leaving them open.
+    `cut` is one contour removed from this layer only, for a gap between it and a layer above; why it
+    is not another hole is in `art/README.md`.
     """
 
     ink: tuple
@@ -165,8 +164,7 @@ KEYLINE = 2.6
 
 _ARROW = _arrow(TAIL, TIP)
 
-# The arrow alone: the bright shape, and all a flat-tinted layer (monochrome, notification) can carry —
-# tinted one colour with the rings, it would merge into them.
+# The arrow alone, all the flat-tinted layers (monochrome, notification) carry.
 ARROW = (Subpath(polygon(_ARROW)),)
 
 LAYERS = (
