@@ -8,7 +8,8 @@
     uv run --script tools/gate/gate.py RUN_DIR
 
 RUN_DIR holds the photos and clicks.json, written by click.py (or synth.py for a fake end). Prints
-readings R1 to R3 and writes report.json beside them.
+readings R1 to R4 and writes report.json beside them, with each view's automatic shafts drawn on
+<view>-shafts.png.
 """
 
 from __future__ import annotations
@@ -28,6 +29,7 @@ from rich.table import Table
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from face import Face, RingFit, fit_rings, near_line, score, single_view_entry, triangulated_entry  # noqa: E402
+from shafts import MATCH_RINGS, Shaft, face_to_image, find_shafts, match  # noqa: E402
 
 PASS_MEDIAN_MM = 1.5
 RING_FIT_MAX_RMS_MM = 1.0
@@ -46,13 +48,63 @@ def focal_px(path: Path, entry: dict) -> float:
     return float(f35) * float(np.hypot(width, height)) / float(np.hypot(36, 24))
 
 
-def ring_fit(run: Path, entry: dict, face: Face, label: str) -> RingFit:
+def load(run: Path, entry: dict) -> np.ndarray:
     path = run / entry["image"]
     image = cv2.imread(str(path))
     if image is None:
         raise SystemExit(f"cannot read {path}")
+    return image
+
+
+def ring_fit(run: Path, image: np.ndarray, entry: dict, face: Face, label: str) -> RingFit:
     with console.status(f"fitting rings in {label} ..."):
-        return fit_rings(image, focal_px(path, entry), face, entry["ref"])
+        return fit_rings(image, focal_px(run / entry["image"], entry), face, entry["ref"])
+
+
+def draw_shafts(path: Path, image: np.ndarray, plane, shafts: list[Shaft], matched: dict) -> None:
+    to_image = face_to_image(plane)
+
+    def px(p_mm):
+        q = to_image @ np.array([p_mm[0], p_mm[1], 1.0])
+        return tuple(int(round(v)) for v in q[:2] / q[2])
+
+    found = {fi for fi, _ in matched.values()}
+    out = image.copy()
+    thick = max(2, image.shape[1] // 600)
+    for fi, shaft in enumerate(shafts):
+        colour = (0, 200, 0) if fi in found else (0, 0, 255)
+        cv2.line(out, px(shaft.entry_mm), px(shaft.far_mm), colour, thick, cv2.LINE_AA)
+        cv2.circle(out, px(shaft.entry_mm), 4 * thick, colour, -1, cv2.LINE_AA)
+    cv2.imwrite(str(path), out)
+
+
+def shafts_reading(run: Path, clicks: dict, images: list, planes: list, holes: list, face: Face, shaft: float):
+    """R4: per view, the clicked arrows whose hole an automatic entry lands within half a ring width of.
+    Holes rather than near clicks, because a near click may sit up the shaft or on a hidden entry."""
+    table = Table(title=f"R4 · shafts found automatically (entry within {MATCH_RINGS} ring width of the hole)")
+    for col in ("view", "clicked", "found", "missed", "false", "entry to hole"):
+        table.add_column(col)
+    views, finding = [], 0
+    for view, image, plane in zip(clicks["views"], images, planes):
+        clicked = [hole if arrow is not None else None for hole, arrow in zip(holes, view["arrows"])]
+        count = sum(c is not None for c in clicked)
+        if plane is None:
+            table.add_row(view["image"], str(count), "-", "-", "-", "no ring fit")
+            views.append({"image": view["image"], "clicked": count, "found": 0, "false": None, "entry_to_hole_mm": []})
+            continue
+        with console.status(f"finding shafts in {view['image']} ..."):
+            found = find_shafts(image, plane, face, shaft)
+        matched = match([s.entry_mm for s in found], clicked, MATCH_RINGS * face.ring_mm)
+        draw_shafts(run / f"{Path(view['image']).stem}-shafts.png", image, plane, found, matched)
+        errors = [matched[i][1] for i in sorted(matched)]
+        finding += len(matched) * 2 > count
+        table.add_row(view["image"], str(count), str(len(matched)), str(count - len(matched)),
+                      str(len(found) - len(matched)), summary(errors))
+        views.append({"image": view["image"], "clicked": count, "found": len(matched),
+                      "false": len(found) - len(matched),
+                      "entry_to_hole_mm": {str(i + 1): d for i, (_, d) in sorted(matched.items())}})
+    console.print(table)
+    return {"views": views, "found_in_most_views": finding * 2 > len(views)}
 
 
 def fits(fit: RingFit) -> bool:
@@ -87,8 +139,11 @@ def main() -> None:
         rings.add_column(col)
     planes, fitted = [], []
     labelled = [(v["image"], v) for v in clicks["views"]] + [(clicks["holes"]["image"] + " (holes)", clicks["holes"])]
+    images = []
     for label, entry in labelled:
-        fit = ring_fit(args.run, entry, face, label)
+        image = load(args.run, entry)
+        images.append(image)
+        fit = ring_fit(args.run, image, entry, face, label)
         ok = fits(fit)
         fitted.append(ok)
         cells = [f"{fit.residual_mm[n]:.2f}" for n in ("gold", "red", "blue")] if fit.plane else ["-"] * 3
@@ -156,6 +211,8 @@ def main() -> None:
         views.append({"image": view["image"], "seen": len(seen), "entry_hidden": hidden})
     console.print(hiding)
 
+    shafts = shafts_reading(args.run, clicks, images[:-1], view_planes, holes, face, shaft)
+
     front_all = single_err[False] + single_err[True]
     median_multi = statistics.median(multi_err) if multi_err else float("inf")
     median_single = statistics.median(front_all) if front_all else float("inf")
@@ -169,7 +226,9 @@ def main() -> None:
             f"  entry visible: {summary(single_err[False])}\n"
             f"  entry hidden: {summary(single_err[True])}\n"
             f"two or more views: median {median_multi:.2f} mm, worst {max(multi_err, default=float('nan')):.2f} mm\n"
-            f"pass line: rings fit and two-view median ≤ {PASS_MEDIAN_MM} mm → [bold]{verdict}[/bold]",
+            f"pass line: rings fit and two-view median ≤ {PASS_MEDIAN_MM} mm → [bold]{verdict}[/bold]\n"
+            f"verdict 1 also needs shafts found automatically in most views: "
+            f"{'yes' if shafts['found_in_most_views'] else 'no'}",
             title="verdict input",
             expand=False,
         )
@@ -181,6 +240,7 @@ def main() -> None:
                                                        "median_front_visible_mm": median_or_none(single_err[False]),
                                                        "median_front_hidden_mm": median_or_none(single_err[True]),
                                                        "median_two_view_mm": median_multi, "views": views,
+                                                       "shafts": shafts,
                                                        "arrows": rows}, indent=2))
 
 

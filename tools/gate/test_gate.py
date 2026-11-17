@@ -18,6 +18,7 @@ sys.path.insert(0, str(HERE))
 
 import click  # noqa: E402
 from face import Face, near_line, score  # noqa: E402
+from shafts import match  # noqa: E402
 
 
 class ScoreTest(unittest.TestCase):
@@ -61,6 +62,17 @@ class FakeEndTest(unittest.TestCase):
         self.assertLessEqual(report["median_two_view_mm"], 1.5)
         for row, true in zip(report["arrows"], truth):
             self.assertLess(abs(row["hole_mm"][0] - true[0]) + abs(row["hole_mm"][1] - true[1]), 2.0)
+
+    def test_shafts_are_found_automatically_with_their_entry_by_the_hole(self):
+        report = self.gate()["shafts"]
+        self.assertEqual([v["clicked"] for v in report["views"]], [6, 6, 6])
+        for view in report["views"][1:]:
+            self.assertGreaterEqual(view["found"], 3, view["image"])
+            self.assertLessEqual(view["false"], 2, view["image"])
+            self.assertLess(max(view["entry_to_hole_mm"].values()), 5.0, view["image"])
+            self.assertTrue((self.run_dir / view["image"].replace(".jpg", "-shafts.png")).is_file())
+        finding = sum(2 * v["found"] > v["clicked"] for v in report["views"])
+        self.assertEqual(report["found_in_most_views"], 2 * finding > len(report["views"]))
 
     def test_hidden_entries_are_counted_per_view_and_split_from_visible_ones(self):
         clicks_path = self.run_dir / "clicks.json"
@@ -141,6 +153,17 @@ class FakeEndTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("run click.py", result.stderr)
         self.assertNotIn("Traceback", result.stderr)
+
+
+class MatchTest(unittest.TestCase):
+    def test_closest_pair_first_and_one_to_one(self):
+        found = [np.array([0.0, 0.0]), np.array([5.0, 0.0])]
+        clicked = [np.array([4.0, 0.0]), np.array([1.0, 0.0]), None]
+        self.assertEqual(match(found, clicked, 10.0), {1: (0, 1.0), 0: (1, 1.0)})
+
+    def test_nothing_beyond_the_radius(self):
+        self.assertEqual(match([np.array([0.0, 0.0])], [np.array([11.0, 0.0])], 10.0), {})
+        self.assertEqual(match([], [np.array([1.0, 0.0])], 10.0), {})
 
 
 class ClickTest(unittest.TestCase):

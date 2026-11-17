@@ -104,7 +104,10 @@ reading, and `test_gate.py` holds all three to account:
    Lab thresholds are tuned on the rendered colours; real light may need them moved, which is itself
    a finding.
 2. Two points per shaft per view: clicked by hand first, then tried with OpenCV's line segment
-   detector to see whether they can be found automatically. When a view hides the entry point (a
+   detector to see whether they can be found automatically (`shafts.py`, reading R4: in the
+   straightened face, pairs of parallel edges one shaft apart with opposite gradients, joined end to
+   end, the entry at the end nearer the camera's foot on the face plane, and scored against the
+   holes rather than the near clicks). When a view hides the entry point (a
    nock in front of it), the near click goes on the lowest point of the shaft that shows and `h`
    marks it *entry hidden*. `gate.py` counts the hidden entries per view (R3) and splits the front
    photo's error into visible and hidden entries (R2).
@@ -144,7 +147,10 @@ cover (0.5–0.7 mm against 7–10 mm). Entry error against the holes: front pho
 worst 2.82 mm; two or three views median 0.85 mm, worst 1.60 mm, and one of the six scored a zone low.
 The worst two-view arrows are those whose shaft planes meet the face at a narrow angle (15° and
 27°), so a fourth photo should be asked for by that angle, not by count. `synth.py` marks no entry
-hidden, so the run's R3 is zero in every view. This proves the arithmetic,
+hidden, so the run's R3 is zero in every view. R4, added 2026-11-17: shafts found automatically in
+2, 3 and 3 of 6 (front, left, right), entries 0.6–4.4 mm from their holes, 1–2 false finds per view;
+the tight group in the gold merges into one line and the front view's fletchings cover most shafts,
+so *most views* does not hold even here. This proves the arithmetic,
 not the method: a rendered face has perfect colours, a flat sheet and straight shafts.
 
 ### A first look at real photos, from the web (2026-11-13)
@@ -297,4 +303,4 @@ Read for this phase on 2026-11-11.
 | R1 | Rings fit automatically in each of the three views, with the residual in mm | `uv run --script tools/gate/gate.py tools/gate/runs/<date>` after `click.py` | *(not taken)* |
 | R2 | Median and worst entry-point error against the holes: front view alone (split into visible and hidden entries) against two views | the same run | *(not taken)* |
 | R3 | How many of the six entry points each view hides | the same run's R3 table, from the near clicks marked `h` in `click.py` | *(not taken)* |
-| R4 | Shafts found automatically by the line segment detector, out of 18 | not built yet: added once R1–R3 are read | *(not taken)* |
+| R4 | Shafts found automatically by the line segment detector, per view out of the arrows clicked in it (18 in all), with each found entry's distance from its hole in mm. A view finds its shafts when more than half are found; *most views* is more than half of them | the same run's R4 table, each view's finds drawn on `<view>-shafts.png` (green found, red false) | *(not taken)* |
