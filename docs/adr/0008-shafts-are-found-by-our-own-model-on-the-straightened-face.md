@@ -31,16 +31,16 @@ the owner photographs and labels. It ships inside the APK and runs on the phone.
   bundled as an asset of a few MB. No download and no network.
 - **Data.**
   1. Rendered ends, from `synth.py` grown into a renderer with real arrows, straw, light and curled
-     faces, labelled perfectly by construction. Blender is fine: its GPL covers the program, not
-     what it renders.
+     faces, labelled perfectly by construction. Blender's GPL covers the program, not what it
+     renders, but a script calling Blender's Python API must itself be GPL (Blender's licensing
+     FAQ). Such a script lives in its own GPL repo and only its renders come in, or the renderer is
+     a permissively licensed one.
   2. The owner's own ends, labelled with `tools/gate/click.py`, which already records each shaft's
      near and far points and the holes as ground truth.
-  3. Photos people choose to send by mail, under terms they agree to first. Never anything the app
-     sends by itself.
-  4. The Wikimedia photos in `tools/gate/runs/web/` are a test set only, never training data.
-- **Order.** Phase 0's verdict comes first, because the model stands on the ring fit. Before the
-  model, a small classifier over the classical detector's candidates may ship to cut false
-  detections. It needs less data but cannot recover shafts the detector missed.
+  3. The Wikimedia photos in `tools/gate/runs/web/` are a test set only, never training data.
+- **Order.** Phase 0's verdict comes first, because the model stands on the ring fit. After verdict
+  1, a small classifier over the classical detector's candidates may ship before the model to cut
+  false detections. It needs less data but cannot recover shafts the detector missed.
 
 ## Alternatives
 
@@ -56,8 +56,10 @@ the owner photographs and labels. It ships inside the APK and runs on the phone.
   fallback if the heatmap cannot recover directions well enough to triangulate.
 - **Collecting the archer's corrections from the app.** It is the richest source, but it needs the
   network, a backend and a privacy policy that says photos leave the phone, which reverses
-  ADR-0007's `INTERNET` removal and *Not in this plan*. Not taken. A mailed photo the archer chooses
-  to send is the most this decision allows.
+  ADR-0007's `INTERNET` removal and *Not in this plan*. Not taken.
+- **Photos from other people, by any route, mail included.** They contradict `privacy-policy.md`,
+  the store listing's "nothing leaves your phone" and `play-app-content.md`'s Data safety answers.
+  Opening that route is a new decision that amends those documents.
 
 ## Consequences
 
@@ -66,5 +68,7 @@ the owner photographs and labels. It ships inside the APK and runs on the phone.
 - A face size or discipline the model was not trained on is a new dataset, not a setting.
 - Training needs a GPU: a free hosted notebook is enough at this size. Inference on the phone adds a
   runtime library and a few MB to the APK.
-- Pretrained encoder weights come with their own terms. Check them when the encoder is chosen, and
-  record the choice beside this ADR.
+- `LICENSE` requires each bundled component's licence text in `app/src/main/assets/licences/`.
+  ONNX Runtime adds an MIT text there; LiteRT is covered by the Apache-2.0 text already there.
+- Pretrained encoder weights come with their own terms. Check them when the encoder is chosen,
+  record the choice beside this ADR, and add the terms to `app/src/main/assets/licences/`.
