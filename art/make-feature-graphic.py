@@ -43,7 +43,8 @@ ART = Path(__file__).parent
 # Edit them; everything else is layout. Translate from the English, per docs/translator-brief.md.
 APP_NAME = "Archery Scorer"
 COPY = {
-    None: ("One line about your app", "Private  ·  Offline  ·  No ads  ·  Free"),
+    None: ("Photograph your end, check every arrow", "Private  ·  Offline  ·  No ads  ·  Free"),
+    "pl": ("Sfotografuj serię, sprawdź każdą strzałę", "Prywatnie  ·  Offline  ·  Bez reklam  ·  Za darmo"),
 }
 BACKGROUND = ART / "feature-background.png"
 W, H = 1024, 500
