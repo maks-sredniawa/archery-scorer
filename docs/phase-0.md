@@ -127,12 +127,12 @@ is retaken.
    automatically in most views.** → Phase 1 builds it on the phone with classical vision: OpenCV on
    device, rings fitted per view, shafts detected and triangulated, the archer confirming. Another
    photo is asked for only while some arrow is seen in fewer than two views. A trained model is a later
-   phase, fed by the archer's own corrections if they agree to keep them.
+   phase, per ADR-0008.
 2. **Rings fit, but shafts are not found reliably.** → Phase 1 still rectifies the face from the
    photos, but the archer taps each arrow's entry point on the straightened face, zoomed in. The app
    does the arithmetic (zones, line cutters with the shaft's radius, X count, the end total), which is
    still the tally the idea removes. Automatic shaft detection becomes its own phase with a trained
-   model, and its licence is chosen then: never Ultralytics YOLO (AGPL-3.0, and so is every model
+   model, per ADR-0008: never Ultralytics YOLO (AGPL-3.0, and so is every model
    trained with it), which conflicts with this repo's `LICENSE`.
 3. **The rings do not fit reliably** from handheld photos. → The app as pitched does not work. Stop
    and bring the choice to the owner: the archer taps the face's centre and edge to straighten it, a

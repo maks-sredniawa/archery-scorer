@@ -129,11 +129,12 @@ emulators and one real phone. Closed testing opens after it.
 
 ## Phase 3 — Shafts found by our own model
 
-Whatever Phase 0's verdict, a trained detector comes after the app is live: it catches what classical
-vision misses, or it replaces the taps. ADR-0008 fixes its shape: an entry-point heatmap on the face
+After verdict 1 or 2 (verdict 3 stops the app as pitched), a trained detector comes after the app is
+live: it catches what classical vision misses, or it replaces the taps. ADR-0008 fixes its shape: an entry-point heatmap on the face
 straightened from the rings, written in PyTorch, run on the phone through LiteRT or ONNX Runtime,
 trained on rendered ends first and then on ends the owner photographs and labels with `click.py`.
-Before it, a small classifier over the classical candidates may ship to cut false detections.
+After verdict 1, a small classifier over the classical candidates may ship before it to cut false
+detections.
 
 ## Not in this plan
 
