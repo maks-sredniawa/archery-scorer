@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/maks-sredniawa/archery-scorer/compare/v0.3.0...v0.4.0) (2026-11-17)
+
+
+### Features
+
+* an arrow in the target face as the app mark ([9d99b4e](https://github.com/maks-sredniawa/archery-scorer/commit/9d99b4e19e191e172be5ed96d6d0cb1608a034fe))
+
 ## [0.3.0](https://github.com/maks-sredniawa/archery-scorer/compare/v0.2.0...v0.3.0) (2026-11-17)
 
 
