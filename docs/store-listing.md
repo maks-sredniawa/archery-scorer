@@ -209,3 +209,17 @@ Pomoc i opinie są czytelniejsze i zawierają więcej:
 • Nowa sekcja O aplikacji: strona aplikacji, polityka prywatności, więcej aplikacji MaksForge i numer wersji do skopiowania
 • Podziękowania, które zaczynają się od tego, kto zrobił aplikację, a potem licencje open source z pełnymi nazwami i linkami do ich warunków
 ```
+
+### 0.4.0
+
+**English** — 98/500:
+
+```
+A new icon: an arrow in the target face. Themed icons and notifications show the arrow on its own.
+```
+
+**Polish** — 81/500:
+
+```
+Nowa ikona: strzała w tarczy. Ikony motywu i powiadomienia pokazują samą strzałę.
+```
