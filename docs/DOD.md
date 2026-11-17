@@ -90,8 +90,9 @@ ADR-0007. The code is in; these are the parts only Play and a phone can prove. T
       the internal track as a licence tester: all four prices loaded, and the small tip opened Play's
       sheet with the quantity picker and the test card. No purchase was made: the buy-and-buy-again
       check is unnecessary (owner, 2026-11-13).
-- [ ] **The debug build shows no tip section and no card.** Play has never heard of the `.debug`
-      package, so absent is the correct reading, not a failure.
+- [x] **The debug build shows no tip section and no card.** Read on the emulators, 2026-11-17: no card
+      on the home screen across relaunches and no tip section in Help and feedback, on `pixel-api36`
+      (Play answered with no products for `.debug`) and `urgent-api26`.
 - [x] **Content rating with *digital purchases* Yes.** Submitted that way 2026-11-12; Brazil 14+.
 
 ## Before the next upload
