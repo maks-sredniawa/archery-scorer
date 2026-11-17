@@ -250,8 +250,8 @@ graphite, violet). Not branded.
   zone. The primary (tone 40) is under 2:1 against the face's red; the light container tones reach
   about 3.4–3.9:1 against the red but sit near 1:1 on the gold. So an arrow marker on the face always
   carries a white and black keyline, never brand colour alone.
-- The feature graphic is left for Phase N: regenerated with this mark, the template's copy runs into
-  it, and the listing copy is not written yet.
+- The feature graphic is regenerated with this mark, English and Polish, its taglines the listing's
+  short descriptions.
 
 ---
 
