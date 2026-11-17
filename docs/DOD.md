@@ -49,13 +49,9 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
       `bundleRelease` of `6b0ca73`, 2026-11-12: three permissions (two from Play Billing, one from
       AndroidX), no features, no orientation locks, Polish complete.
 - [x] **Choose the palette.** Range green, chosen 2026-11-11 (`phase-0.md` section 4).
-- [ ] **Make the support address work both ways.** `bootstrap.py` compiled in
-      `<repo>.support@maksforge.com` (or `--support`) and wrote it into the site, the privacy policy
-      and the Play docs. Mail to it arrives through the domain's catch-all; replying from it needs the
-      receiving Gmail's *Send mail as* entry, confirmed. Send *Report a problem* from a non-Gmail
-      account and check it lands outside Spam. One address everywhere — the listing's contact field
-      and IARC's rating contact too; `SupportConfig.kt` says why it lives on our own domain.
-      *Send mail as* confirmed and the signature set, 2026-11-12; the non-Gmail test is still owed.
+- [x] **Make the support address work both ways.** `archery-scorer.support@maksforge.com`: *Send mail as*
+      confirmed and the signature set, 2026-11-12; the listing and IARC use the same address. The
+      non-Gmail spam check is not needed: the domain is the owner's own (owner, 2026-11-17).
 - [x] **Write the listing.** `docs/store-listing.md`, English and Polish, category *Sports*, 2026-11-12.
 - [ ] **Capture the screenshots** with `scripts/screenshots.py` from a release-shaped build, in every
       listing language, into `art/play-screenshots/`. Play wants at least two before the first review.
