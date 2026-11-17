@@ -4,9 +4,7 @@
     the silhouette rather than the app. The flat .webp mipmaps beside this file are what older
     launchers and some system surfaces use; both are generated from the same mark.
 
-    `<monochrome>` is the themed-icon layer (API 33+). It is a real requirement, not a nicety: a
-    themed launcher tints the whole layer one flat colour, so any detail painted in the background
-    colour disappears, and the face's rings would merge with the arrow. That layer is the arrow alone.
+    `<monochrome>` is the themed-icon layer (API 33+): the arrow alone, which art/README.md explains.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />

@@ -33,7 +33,8 @@ mark (three holes in a ringed disc), which read as a bowling ball.
   the notification icon. Tinted one colour, the rings would merge with it.
 - **The keyline is a real gap, cut from the face only** (`Layer.cut`), a clip in the
   `VectorDrawable` and punched transparency in the rasters. It cannot be one more hole in the face:
-  laid across the face's own ring gaps, a hole fills them under non-zero winding.
+  a hole only subtracts once under non-zero winding, so laid across the face's own ring gaps it
+  fills them instead of leaving them open.
 
 - **Recolouring is three values in `mark.py` and a re-run**: `GROUND` (the icon's field), `FACE`
   (the rings) and `MARK_INK` (the arrow). `make-launcher-icon.py` writes every drawable from them, the
