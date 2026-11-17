@@ -58,7 +58,8 @@ VISIBLE_MARGIN = 40  # what a viewer of the cropped graphic should actually see
 MARGIN = CROP + VISIBLE_MARGIN  # 108px from the canvas edge to any content, both sides
 
 MARK_SIZE = 190
-MARK_CY = 215
+MARK_CY = 250
+TILE_CORNER = 0.22  # of the side, near what Play rounds a listing icon to
 MIN_GAP = 24  # the copy must clear the mark by this much; render() checks it
 
 FONT_DIR = Path("/usr/share/fonts/truetype/noto")
@@ -130,24 +131,28 @@ def ground(size):
 
 
 def draw_mark(base, cx, cy, size):
-    """The shared mark from `mark.py`, centred on (cx, cy) at `size` px across, in final pixels.
+    """The launcher icon as a rounded tile, centred on (cx, cy) at `size` px across, in final pixels.
 
-    Painted onto its own layer so the hole can be punched to full transparency rather than filled
-    with a guess at the ground colour — the ground here is a gradient or a photograph, so a painted
-    hole would match it at one height at best. The launcher icon gets the same hole from the same
-    declaration, by winding rather than by alpha.
+    A tile rather than the bare mark because the face is drawn to be cropped: here the tile is the
+    crop, as a launcher's mask is on a home screen. Each layer is painted on its own sheet so its
+    holes and the gap round the arrow are punched to transparency and show the tile's ground,
+    from the same declaration the launcher icon reads.
     """
-    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
-    x0, y0, x1, y1 = mark.bounds()
-    k = size / max(x1 - x0, y1 - y0)
-
-    def tf(p):
-        return ((cx + (p[0] - (x0 + x1) / 2) * k) * S, (cy + (p[1] - (y0 + y1) / 2) * k) * S)
-
-    for e in mark.PARTS:
-        d.polygon(mark.outline(e, tf), fill=(0, 0, 0, 0) if e.hole else mark.MARK_INK + (255,))
-    base.alpha_composite(layer)
+    side = round(size * S)
+    tile = Image.new("RGBA", (side, side), mark.GROUND + (255,))
+    tf = mark.fit(side, side)
+    for layer in mark.LAYERS:
+        sheet = Image.new("RGBA", tile.size, (0, 0, 0, 0))
+        d = ImageDraw.Draw(sheet)
+        for e in layer.parts:
+            d.polygon(mark.outline(e, tf), fill=(0, 0, 0, 0) if e.hole else layer.ink + (255,))
+        if layer.cut:
+            d.polygon(mark.outline(layer.cut, tf), fill=(0, 0, 0, 0))
+        tile.alpha_composite(sheet)
+    mask = Image.new("L", tile.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, side - 1, side - 1), radius=round(side * TILE_CORNER), fill=255)
+    tile.putalpha(mask)
+    base.alpha_composite(tile, (round((cx - size / 2) * S), round((cy - size / 2) * S)))
 
 
 def out_path(tag):
@@ -161,14 +166,14 @@ def render(out_file, tagline_text, features_text):
     draw_mark(base, cx=W - MARGIN - MARK_SIZE / 2, cy=MARK_CY, size=MARK_SIZE)
 
     d = ImageDraw.Draw(base)
-    wordmark = ImageFont.truetype(str(FONT_BOLD), 104 * S)
+    wordmark = ImageFont.truetype(str(FONT_BOLD), 80 * S)
     tagline = ImageFont.truetype(str(FONT_REG), 31 * S)
     features = ImageFont.truetype(str(FONT_REG), 25 * S)
 
     x = MARGIN * S
-    d.text((x, 240 * S), APP_NAME, font=wordmark, fill=INK, anchor="ls")
-    d.text((x, 296 * S), tagline_text, font=tagline, fill=TAGLINE_INK, anchor="ls")
-    d.text((x, 372 * S), features_text, font=features, fill=SUBTLE, anchor="ls")
+    d.text((x, 218 * S), APP_NAME, font=wordmark, fill=INK, anchor="ls")
+    d.text((x, 272 * S), tagline_text, font=tagline, fill=TAGLINE_INK, anchor="ls")
+    d.text((x, 348 * S), features_text, font=features, fill=SUBTLE, anchor="ls")
 
     out = base.resize((W, H), Image.LANCZOS).convert("RGB")  # RGB: Play rejects alpha
     out.save(out_file, "PNG", optimize=True)

@@ -37,9 +37,9 @@ close. Whenever `APP_SCHEMA_VERSION` changes, all five hold before the release g
 - [x] **Delete what the app does not need.** Room, backup export/restore and reminders went 2026-11-11;
       photos and the tip stay.
 - [x] **Decide `minSdk` deliberately, before launch.** Kept at 26 (owner, 2026-11-12).
-- [ ] **Regenerate the feature graphic** with the Group mark: `python3 art/make-feature-graphic.py`,
-      once the listing copy is written. Deferred to Phase N (`phase-0.md` section 4): the template's
-      copy runs into the new mark.
+- [ ] **Regenerate the feature graphic** once the listing copy is written:
+      `python3 art/make-feature-graphic.py`. Deferred to Phase N (`phase-0.md` section 4): it already
+      carries the arrow mark, but its tagline is still the template's placeholder.
 - [x] **Replace the placeholder domain.** Items deleted 2026-11-11; the home screen is an empty
       **Score an end** screen.
 - [x] **Rewrite `scripts/edge-to-edge.py`'s SCENES** against your screens. Rewritten in the strip;

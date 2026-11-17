@@ -6,7 +6,7 @@
 
     `<monochrome>` is the themed-icon layer (API 33+). It is a real requirement, not a nicety: a
     themed launcher tints the whole layer one flat colour, so any detail painted in the background
-    colour disappears. The hole in the mark survives because it is a genuine hole in the path.
+    colour disappears, and the face's rings would merge with the arrow. That layer is the arrow alone.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />
